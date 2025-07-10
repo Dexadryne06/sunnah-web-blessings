@@ -80,8 +80,8 @@ export const Home = () => {
         {/* MetaBalls Background */}
         <div className="absolute inset-0 opacity-30">
           <MetaBalls
-            color="hsl(var(--primary))"
-            cursorBallColor="hsl(var(--accent))"
+            color="hsl(var(--muted-foreground))"
+            cursorBallColor="hsl(var(--muted-foreground))"
             cursorBallSize={3}
             ballCount={12}
             animationSize={40}
