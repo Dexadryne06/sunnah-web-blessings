@@ -9,24 +9,42 @@
   position: absolute;
   width: 300%;
   height: 50%;
-  opacity: 0.7;
+  opacity: 0;
   bottom: -12px;
   right: -250%;
   border-radius: 50%;
-  animation: star-movement-bottom linear infinite alternate;
+  animation-duration: 6s;
+  animation-name: star-movement-bottom;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-play-state: paused;
   z-index: 0;
+  transition: opacity 0.3s ease;
 }
 
 .border-gradient-top {
   position: absolute;
-  opacity: 0.7;
+  opacity: 0;
   width: 300%;
   height: 50%;
   top: -12px;
   left: -250%;
   border-radius: 50%;
-  animation: star-movement-top linear infinite alternate;
+  animation-duration: 6s;
+  animation-name: star-movement-top;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-play-state: paused;
   z-index: 0;
+  transition: opacity 0.3s ease;
+}
+
+.star-border-container:hover .border-gradient-bottom,
+.star-border-container:hover .border-gradient-top {
+  opacity: 0.9;
+  animation-play-state: running;
 }
 
 .inner-content {

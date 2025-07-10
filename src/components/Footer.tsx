@@ -3,18 +3,19 @@ import { Heart } from "lucide-react";
 export const Footer = () => {
   return (
     <footer className="bg-muted/50 border-t mt-16">
-      <div className="container mx-auto px-4 py-8">
-        <div className="text-center space-y-4">
-          <div className="flex items-center justify-center gap-2 text-foreground">
+      <div className="container mx-auto px-4 py-6">
+        <div className="flex flex-col md:flex-row items-center justify-between gap-4">
+          <div className="flex items-center gap-2 text-foreground">
             <span className="font-semibold">Masjid As-Sunnah</span>
             <Heart className="h-4 w-4 text-primary" />
           </div>
-          <div className="text-sm text-muted-foreground space-y-2">
-            <p>© {new Date().getFullYear()} Masjid As-Sunnah. Tutti i diritti riservati.</p>
-            <p>Un luogo di adorazione, apprendimento e comunità</p>
+          <div className="flex flex-col md:flex-row items-center gap-4 text-sm text-muted-foreground">
+            <span>© {new Date().getFullYear()} Masjid As-Sunnah. Tutti i diritti riservati.</span>
+            <span className="hidden md:inline">•</span>
+            <span>Un luogo di adorazione, apprendimento e comunità</span>
           </div>
           <div className="text-xs text-muted-foreground/60">
-            <p>Realizzato con 💚 per la comunità musulmana</p>
+            <span>Realizzato con 💚 per la comunità musulmana</span>
           </div>
         </div>
       </div>
