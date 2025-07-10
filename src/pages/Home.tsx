@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import MetaBalls from "@/components/MetaBalls";
 import quranStudyImg from "@/assets/quran-study.jpg";
 import fridayPrayerImg from "@/assets/friday-prayer.jpg";
 import childrenEducationImg from "@/assets/children-education.jpg";
@@ -70,12 +71,28 @@ export const Home = () => {
     >
       {/* Hero Section */}
       <motion.section 
-        className="bg-gradient-to-b from-primary/5 to-background py-20"
+        className="relative bg-gradient-to-b from-primary/5 to-background py-20 overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
       >
-        <div className="container mx-auto px-4 text-center">
+        {/* MetaBalls Background */}
+        <div className="absolute inset-0 opacity-30">
+          <MetaBalls
+            color="hsl(var(--primary))"
+            cursorBallColor="hsl(var(--primary))"
+            cursorBallSize={3}
+            ballCount={12}
+            animationSize={40}
+            enableMouseInteraction={true}
+            enableTransparency={true}
+            hoverSmoothness={0.08}
+            clumpFactor={0.8}
+            speed={0.2}
+          />
+        </div>
+        
+        <div className="container mx-auto px-4 text-center relative z-10">
           <motion.h1 
             className="text-4xl md:text-6xl font-bold text-foreground mb-6"
             initial={{ opacity: 0, y: 30 }}
