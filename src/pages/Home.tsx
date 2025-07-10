@@ -2,6 +2,7 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download } from "lucide-react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import quranStudyImg from "@/assets/quran-study.jpg";
 import fridayPrayerImg from "@/assets/friday-prayer.jpg";
 import childrenEducationImg from "@/assets/children-education.jpg";
@@ -61,18 +62,38 @@ const featuredLessons = [
 
 export const Home = () => {
   return (
-    <div className="space-y-16 pb-16">
+    <motion.div 
+      className="space-y-16 pb-16"
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.8 }}
+    >
       {/* Hero Section */}
-      <section className="bg-gradient-to-b from-primary/5 to-background py-20">
+      <motion.section 
+        className="bg-gradient-to-b from-primary/5 to-background py-20"
+        initial={{ opacity: 0, y: 20 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 1, delay: 0.2 }}
+      >
         <div className="container mx-auto px-4 text-center">
-          <h1 className="text-4xl md:text-6xl font-bold text-foreground mb-6">
+          <motion.h1 
+            className="text-4xl md:text-6xl font-bold text-foreground mb-6"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.4 }}
+          >
             Benvenuti a Masjid As-Sunnah
-          </h1>
-          <p className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto">
+          </motion.h1>
+          <motion.p 
+            className="text-xl md:text-2xl text-muted-foreground max-w-2xl mx-auto"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8, delay: 0.6 }}
+          >
             Un luogo di ritrovo, adorazione e tranquillità
-          </p>
+          </motion.p>
         </div>
-      </section>
+      </motion.section>
 
       {/* Prayer Times Section */}
       <section className="container mx-auto px-4">
@@ -85,7 +106,7 @@ export const Home = () => {
           </p>
         </div>
         
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-3xl mx-auto">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2">
               Oggi - {new Date().toLocaleDateString('it-IT', { 
@@ -121,21 +142,29 @@ export const Home = () => {
             Libri in Evidenza
           </h2>
           <p className="text-muted-foreground">
-            Scopri i testi fondamentali della nostra biblioteca
+            Scopri i testi fondamentali della nostra biblioteca - clicca per scaricare
           </p>
         </div>
 
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          {featuredBooks.map((book) => (
-            <Card key={book.id} className="group hover:shadow-lg transition-shadow cursor-pointer">
-              <CardContent className="p-6">
-                <div className="aspect-[3/4] bg-muted rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-muted-foreground">Copertina libro</span>
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{book.title}</h3>
-                <p className="text-sm text-muted-foreground">{book.author}</p>
-              </CardContent>
-            </Card>
+        <div className="grid md:grid-cols-3 gap-10 max-w-5xl mx-auto">
+          {featuredBooks.map((book, index) => (
+            <motion.div
+              key={book.id}
+              initial={{ opacity: 0, y: 30 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.6, delay: index * 0.1 }}
+              viewport={{ once: true }}
+            >
+              <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105">
+                <CardContent className="p-6">
+                  <div className="aspect-[3/4] bg-muted rounded-lg mb-4 flex items-center justify-center">
+                    <span className="text-muted-foreground">Copertina libro</span>
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-2">{book.title}</h3>
+                  <p className="text-sm text-muted-foreground">{book.author}</p>
+                </CardContent>
+              </Card>
+            </motion.div>
           ))}
         </div>
 
@@ -158,24 +187,32 @@ export const Home = () => {
             </p>
           </div>
 
-          <div className="grid md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+          <div className="grid md:grid-cols-3 gap-10 max-w-6xl mx-auto">
             {featuredLessons.map((lesson, index) => (
-              <Card key={index} className="group hover:shadow-lg transition-shadow">
-                <CardContent className="p-6">
-                  <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
-                    <img 
-                      src={lesson.image} 
-                      alt={lesson.title}
-                      className="w-full h-full object-cover"
-                    />
-                  </div>
-                  <div className="inline-block bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full mb-3">
-                    {lesson.day}
-                  </div>
-                  <h3 className="font-semibold text-foreground mb-2">{lesson.title}</h3>
-                  <p className="text-sm text-muted-foreground">{lesson.description}</p>
-                </CardContent>
-              </Card>
+              <motion.div
+                key={index}
+                initial={{ opacity: 0, y: 30 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                transition={{ duration: 0.6, delay: index * 0.1 }}
+                viewport={{ once: true }}
+              >
+                <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-105">
+                  <CardContent className="p-6">
+                    <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
+                      <img 
+                        src={lesson.image} 
+                        alt={lesson.title}
+                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                      />
+                    </div>
+                    <div className="inline-block bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full mb-3">
+                      {lesson.day}
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-2">{lesson.title}</h3>
+                    <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                  </CardContent>
+                </Card>
+              </motion.div>
             ))}
           </div>
 
@@ -186,6 +223,6 @@ export const Home = () => {
           </div>
         </div>
       </section>
-    </div>
+    </motion.div>
   );
 };
