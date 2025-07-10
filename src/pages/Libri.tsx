@@ -1,6 +1,7 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Download, ExternalLink } from "lucide-react";
+import StarBorder from "@/components/StarBorder";
 
 // Mock data for books
 const books = [
@@ -106,14 +107,22 @@ export const Libri = () => {
       <div className="mb-12">
         <div className="flex flex-wrap gap-2 justify-center">
           {categories.map((category) => (
-            <Button
+            <StarBorder
               key={category}
-              variant={category === "Tutti" ? "default" : "outline"}
-              size="sm"
-              className="rounded-full"
+              as="div"
+              color="hsl(var(--primary))"
+              speed="4s"
+              thickness={3.5}
+              className="inline-block"
             >
-              {category}
-            </Button>
+              <Button
+                variant={category === "Tutti" ? "default" : "outline"}
+                size="sm"
+                className="rounded-full bg-transparent border-0 hover:bg-transparent"
+              >
+                {category}
+              </Button>
+            </StarBorder>
           ))}
         </div>
       </div>
@@ -121,44 +130,68 @@ export const Libri = () => {
       {/* Books Grid */}
       <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-8">
         {books.map((book) => (
-          <Card key={book.id} className="group hover:shadow-lg transition-all duration-300">
-            <CardContent className="p-6">
-              {/* Book Cover */}
-              <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg mb-4 flex items-center justify-center">
-                <span className="text-muted-foreground text-sm">
+          <StarBorder
+            key={book.id}
+            as="div"
+            color="hsl(var(--accent))"
+            speed="5s"
+            thickness={3.5}
+            className="w-full h-full"
+          >
+            <Card className="group hover:shadow-lg transition-all duration-300 bg-transparent border-0">
+              <CardContent className="p-6">
+                {/* Book Cover */}
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg mb-4 flex items-center justify-center">
+                  <span className="text-muted-foreground text-sm">
+                    {book.title}
+                  </span>
+                </div>
+
+                {/* Category Badge */}
+                <div className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded-full mb-3">
+                  {book.category}
+                </div>
+
+                {/* Book Info */}
+                <h3 className="font-semibold text-foreground mb-2 line-clamp-2">
                   {book.title}
-                </span>
-              </div>
+                </h3>
+                <p className="text-sm text-muted-foreground mb-3 font-medium">
+                  {book.author}
+                </p>
+                <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
+                  {book.description}
+                </p>
 
-              {/* Category Badge */}
-              <div className="inline-block bg-primary/10 text-primary text-xs px-2 py-1 rounded-full mb-3">
-                {book.category}
-              </div>
-
-              {/* Book Info */}
-              <h3 className="font-semibold text-foreground mb-2 line-clamp-2">
-                {book.title}
-              </h3>
-              <p className="text-sm text-muted-foreground mb-3 font-medium">
-                {book.author}
-              </p>
-              <p className="text-sm text-muted-foreground mb-4 line-clamp-3">
-                {book.description}
-              </p>
-
-              {/* Action Buttons */}
-              <div className="flex gap-2">
-                <Button size="sm" className="flex-1 gap-2">
-                  <Download className="h-4 w-4" />
-                  Scarica
-                </Button>
-                <Button size="sm" variant="outline" className="gap-2">
-                  <ExternalLink className="h-4 w-4" />
-                  Leggi
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
+                {/* Action Buttons */}
+                <div className="flex gap-2">
+                  <StarBorder
+                    as="div"
+                    color="hsl(var(--primary))"
+                    speed="3s"
+                    thickness={2}
+                    className="flex-1"
+                  >
+                    <Button size="sm" className="w-full gap-2 bg-transparent border-0 hover:bg-transparent">
+                      <Download className="h-4 w-4" />
+                      Scarica
+                    </Button>
+                  </StarBorder>
+                  <StarBorder
+                    as="div"
+                    color="hsl(var(--accent))"
+                    speed="3s"
+                    thickness={2}
+                  >
+                    <Button size="sm" variant="outline" className="gap-2 bg-transparent border-0 hover:bg-transparent">
+                      <ExternalLink className="h-4 w-4" />
+                      Leggi
+                    </Button>
+                  </StarBorder>
+                </div>
+              </CardContent>
+            </Card>
+          </StarBorder>
         ))}
       </div>
 

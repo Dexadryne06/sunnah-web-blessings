@@ -6,6 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import StarBorder from "@/components/StarBorder";
 
 const contactInfo = [
   {
@@ -91,23 +92,32 @@ export const Contattaci = () => {
             </h2>
             <div className="space-y-6">
               {contactInfo.map((info, index) => (
-                <Card key={index}>
-                  <CardContent className="p-6">
-                    <div className="flex items-start gap-4">
-                      <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                        <info.icon className="h-6 w-6 text-primary" />
+                <StarBorder
+                  key={index}
+                  as="div"
+                  color="hsl(var(--primary))"
+                  speed="4s"
+                  thickness={3.5}
+                  className="w-full"
+                >
+                  <Card className="bg-transparent border-0">
+                    <CardContent className="p-6">
+                      <div className="flex items-start gap-4">
+                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
+                          <info.icon className="h-6 w-6 text-primary" />
+                        </div>
+                        <div>
+                          <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
+                          {info.details.map((detail, detailIndex) => (
+                            <p key={detailIndex} className="text-muted-foreground text-sm">
+                              {detail}
+                            </p>
+                          ))}
+                        </div>
                       </div>
-                      <div>
-                        <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
-                        {info.details.map((detail, detailIndex) => (
-                          <p key={detailIndex} className="text-muted-foreground text-sm">
-                            {detail}
-                          </p>
-                        ))}
-                      </div>
-                    </div>
-                  </CardContent>
-                </Card>
+                    </CardContent>
+                  </Card>
+                </StarBorder>
               ))}
             </div>
           </div>
@@ -186,21 +196,29 @@ export const Contattaci = () => {
                   />
                 </div>
 
-                <Button 
-                  type="submit" 
-                  size="lg" 
-                  className="w-full gap-2"
-                  disabled={isSubmitting}
+                <StarBorder
+                  as="div"
+                  color="hsl(var(--primary))"
+                  speed="4s"
+                  thickness={3.5}
+                  className="w-full"
                 >
-                  {isSubmitting ? (
-                    "Invio in corso..."
-                  ) : (
-                    <>
-                      <Send className="h-4 w-4" />
-                      Invia Messaggio
-                    </>
-                  )}
-                </Button>
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full gap-2 bg-transparent border-0 hover:bg-transparent"
+                    disabled={isSubmitting}
+                  >
+                    {isSubmitting ? (
+                      "Invio in corso..."
+                    ) : (
+                      <>
+                        <Send className="h-4 w-4" />
+                        Invia Messaggio
+                      </>
+                    )}
+                  </Button>
+                </StarBorder>
               </form>
             </CardContent>
           </Card>

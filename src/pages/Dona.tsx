@@ -2,6 +2,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Copy, Mail, Heart, Building, BookOpen, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
+import StarBorder from "@/components/StarBorder";
 import sadaqaTreeImg from "@/assets/sadaqa-tree.jpg";
 import mosqueHeroImg from "@/assets/mosque-hero.jpg";
 
@@ -104,15 +105,24 @@ export const Dona = () => {
         </h2>
         <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6">
           {impactAreas.map((area, index) => (
-            <Card key={index} className="text-center hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
-                  <area.icon className="h-8 w-8 text-primary" />
-                </div>
-                <h3 className="font-semibold text-foreground mb-2">{area.title}</h3>
-                <p className="text-sm text-muted-foreground">{area.description}</p>
-              </CardContent>
-            </Card>
+            <StarBorder
+              key={index}
+              as="div"
+              color="hsl(var(--primary))"
+              speed="5s"
+              thickness={3.5}
+              className="w-full h-full"
+            >
+              <Card className="text-center hover:shadow-lg transition-shadow bg-transparent border-0">
+                <CardContent className="p-6">
+                  <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
+                    <area.icon className="h-8 w-8 text-primary" />
+                  </div>
+                  <h3 className="font-semibold text-foreground mb-2">{area.title}</h3>
+                  <p className="text-sm text-muted-foreground">{area.description}</p>
+                </CardContent>
+              </Card>
+            </StarBorder>
           ))}
         </div>
       </section>
@@ -130,13 +140,21 @@ export const Dona = () => {
                   <label className="text-sm font-medium text-muted-foreground">Beneficiario</label>
                   <p className="font-medium text-foreground">{bankDetails.beneficiary}</p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyToClipboard(bankDetails.beneficiary, "Beneficiario")}
+                <StarBorder
+                  as="div"
+                  color="hsl(var(--accent))"
+                  speed="3s"
+                  thickness={2}
                 >
-                  <Copy className="h-4 w-4" />
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(bankDetails.beneficiary, "Beneficiario")}
+                    className="bg-transparent border-0 hover:bg-transparent"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </StarBorder>
               </div>
 
               <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
@@ -144,13 +162,21 @@ export const Dona = () => {
                   <label className="text-sm font-medium text-muted-foreground">IBAN</label>
                   <p className="font-mono font-medium text-foreground">{bankDetails.iban}</p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyToClipboard(bankDetails.iban, "IBAN")}
+                <StarBorder
+                  as="div"
+                  color="hsl(var(--accent))"
+                  speed="3s"
+                  thickness={2}
                 >
-                  <Copy className="h-4 w-4" />
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(bankDetails.iban, "IBAN")}
+                    className="bg-transparent border-0 hover:bg-transparent"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </StarBorder>
               </div>
 
               <div className="flex justify-between items-center p-4 bg-muted rounded-lg">
@@ -158,21 +184,37 @@ export const Dona = () => {
                   <label className="text-sm font-medium text-muted-foreground">Causale</label>
                   <p className="font-medium text-foreground">{bankDetails.causale}</p>
                 </div>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => copyToClipboard(bankDetails.causale, "Causale")}
+                <StarBorder
+                  as="div"
+                  color="hsl(var(--accent))"
+                  speed="3s"
+                  thickness={2}
                 >
-                  <Copy className="h-4 w-4" />
-                </Button>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => copyToClipboard(bankDetails.causale, "Causale")}
+                    className="bg-transparent border-0 hover:bg-transparent"
+                  >
+                    <Copy className="h-4 w-4" />
+                  </Button>
+                </StarBorder>
               </div>
             </div>
 
             <div className="text-center pt-4">
-              <Button className="gap-2" size="lg">
-                <Mail className="h-4 w-4" />
-                Invia Ricevuta via Email
-              </Button>
+              <StarBorder
+                as="div"
+                color="hsl(var(--primary))"
+                speed="4s"
+                thickness={3.5}
+                className="inline-block"
+              >
+                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent" size="lg">
+                  <Mail className="h-4 w-4" />
+                  Invia Ricevuta via Email
+                </Button>
+              </StarBorder>
               <p className="text-sm text-muted-foreground mt-2">
                 Clicca per aprire il tuo client email e inviarci la ricevuta della donazione
               </p>

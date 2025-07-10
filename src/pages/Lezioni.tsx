@@ -1,6 +1,7 @@
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, MapPin, User } from "lucide-react";
+import StarBorder from "@/components/StarBorder";
 
 // Mock data for lessons
 const weeklyLessons = [
@@ -143,53 +144,62 @@ export const Lezioni = () => {
         
         <div className="grid gap-6">
           {weeklyLessons.map((lesson) => (
-            <Card key={lesson.id} className="hover:shadow-lg transition-shadow">
-              <CardContent className="p-6">
-                <div className="flex flex-col md:flex-row gap-6">
-                  {/* Image */}
-                  <div className="md:w-48 aspect-video md:aspect-square bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
-                    <span className="text-muted-foreground text-sm text-center px-4">
-                      {lesson.title}
-                    </span>
-                  </div>
-                  
-                  {/* Content */}
-                  <div className="flex-1">
-                    <div className="flex flex-wrap items-center gap-3 mb-3">
-                      <Badge variant="outline" className="font-semibold">
-                        {lesson.day}
-                      </Badge>
-                      <Badge className={getLevelColor(lesson.level)}>
-                        {lesson.level}
-                      </Badge>
+            <StarBorder
+              key={lesson.id}
+              as="div"
+              color="hsl(var(--primary))"
+              speed="6s"
+              thickness={3.5}
+              className="w-full"
+            >
+              <Card className="hover:shadow-lg transition-shadow bg-transparent border-0">
+                <CardContent className="p-6">
+                  <div className="flex flex-col md:flex-row gap-6">
+                    {/* Image */}
+                    <div className="md:w-48 aspect-video md:aspect-square bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg flex items-center justify-center flex-shrink-0">
+                      <span className="text-muted-foreground text-sm text-center px-4">
+                        {lesson.title}
+                      </span>
                     </div>
                     
-                    <h3 className="text-xl font-semibold text-foreground mb-2">
-                      {lesson.title}
-                    </h3>
-                    
-                    <p className="text-muted-foreground mb-4 leading-relaxed">
-                      {lesson.description}
-                    </p>
-                    
-                    <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <Clock className="h-4 w-4" />
-                        {lesson.time}
+                    {/* Content */}
+                    <div className="flex-1">
+                      <div className="flex flex-wrap items-center gap-3 mb-3">
+                        <Badge variant="outline" className="font-semibold">
+                          {lesson.day}
+                        </Badge>
+                        <Badge className={getLevelColor(lesson.level)}>
+                          {lesson.level}
+                        </Badge>
                       </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <User className="h-4 w-4" />
-                        {lesson.instructor}
-                      </div>
-                      <div className="flex items-center gap-2 text-muted-foreground">
-                        <MapPin className="h-4 w-4" />
-                        {lesson.location}
+                      
+                      <h3 className="text-xl font-semibold text-foreground mb-2">
+                        {lesson.title}
+                      </h3>
+                      
+                      <p className="text-muted-foreground mb-4 leading-relaxed">
+                        {lesson.description}
+                      </p>
+                      
+                      <div className="grid sm:grid-cols-2 lg:grid-cols-4 gap-3 text-sm">
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <Clock className="h-4 w-4" />
+                          {lesson.time}
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <User className="h-4 w-4" />
+                          {lesson.instructor}
+                        </div>
+                        <div className="flex items-center gap-2 text-muted-foreground">
+                          <MapPin className="h-4 w-4" />
+                          {lesson.location}
+                        </div>
                       </div>
                     </div>
                   </div>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </StarBorder>
           ))}
         </div>
       </div>
@@ -202,30 +212,39 @@ export const Lezioni = () => {
         
         <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
           {specialEvents.map((event, index) => (
-            <Card key={index} className="hover:shadow-lg transition-shadow">
-              <CardHeader>
-                <div className="flex items-center gap-2 text-primary mb-2">
-                  <Calendar className="h-4 w-4" />
-                  <span className="text-sm font-medium">{event.date}</span>
-                </div>
-                <CardTitle className="text-lg">{event.title}</CardTitle>
-              </CardHeader>
-              <CardContent className="pt-0">
-                <div className="space-y-3">
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <Clock className="h-4 w-4" />
-                    {event.time}
+            <StarBorder
+              key={index}
+              as="div"
+              color="hsl(var(--accent))"
+              speed="4s"
+              thickness={3.5}
+              className="w-full h-full"
+            >
+              <Card className="hover:shadow-lg transition-shadow bg-transparent border-0">
+                <CardHeader>
+                  <div className="flex items-center gap-2 text-primary mb-2">
+                    <Calendar className="h-4 w-4" />
+                    <span className="text-sm font-medium">{event.date}</span>
                   </div>
-                  <div className="flex items-center gap-2 text-muted-foreground text-sm">
-                    <User className="h-4 w-4" />
-                    {event.speaker}
+                  <CardTitle className="text-lg">{event.title}</CardTitle>
+                </CardHeader>
+                <CardContent className="pt-0">
+                  <div className="space-y-3">
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <Clock className="h-4 w-4" />
+                      {event.time}
+                    </div>
+                    <div className="flex items-center gap-2 text-muted-foreground text-sm">
+                      <User className="h-4 w-4" />
+                      {event.speaker}
+                    </div>
+                    <p className="text-sm text-muted-foreground leading-relaxed">
+                      {event.description}
+                    </p>
                   </div>
-                  <p className="text-sm text-muted-foreground leading-relaxed">
-                    {event.description}
-                  </p>
-                </div>
-              </CardContent>
-            </Card>
+                </CardContent>
+              </Card>
+            </StarBorder>
           ))}
         </div>
       </div>

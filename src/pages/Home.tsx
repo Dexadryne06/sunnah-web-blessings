@@ -3,6 +3,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Download } from "lucide-react";
 import { Link } from "react-router-dom";
 import { motion } from "framer-motion";
+import StarBorder from "@/components/StarBorder";
 import MetaBalls from "@/components/MetaBalls";
 import quranStudyImg from "@/assets/quran-study.jpg";
 import fridayPrayerImg from "@/assets/friday-prayer.jpg";
@@ -80,7 +81,7 @@ export const Home = () => {
         <div className="absolute inset-0 opacity-30">
           <MetaBalls
             color="hsl(var(--primary))"
-            cursorBallColor="hsl(var(--primary))"
+            cursorBallColor="hsl(var(--accent))"
             cursorBallSize={3}
             ballCount={12}
             animationSize={40}
@@ -143,10 +144,18 @@ export const Home = () => {
               ))}
             </div>
             <div className="mt-6 text-center">
-              <Button className="gap-2">
-                <Download className="h-4 w-4" />
-                Scarica PDF del mese
-              </Button>
+              <StarBorder
+                as="div"
+                color="hsl(var(--primary))"
+                speed="4s"
+                thickness={3.5}
+                className="inline-block"
+              >
+                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent">
+                  <Download className="h-4 w-4" />
+                  Scarica PDF del mese
+                </Button>
+              </StarBorder>
             </div>
           </CardContent>
         </Card>
@@ -172,23 +181,39 @@ export const Home = () => {
               transition={{ duration: 0.6, delay: index * 0.1 }}
               viewport={{ once: true }}
             >
-              <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105">
-                <CardContent className="p-6">
-                  <div className="aspect-[3/4] bg-muted rounded-lg mb-4 flex items-center justify-center">
-                    <span className="text-muted-foreground">Copertina libro</span>
-                  </div>
-                  <h3 className="font-semibold text-foreground mb-2">{book.title}</h3>
-                  <p className="text-sm text-muted-foreground">{book.author}</p>
-                </CardContent>
-              </Card>
+              <StarBorder
+                as="div"
+                color="hsl(var(--primary))"
+                speed="5s"
+                thickness={3.5}
+                className="w-full h-full"
+              >
+                <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 bg-transparent border-0">
+                  <CardContent className="p-6">
+                    <div className="aspect-[3/4] bg-muted rounded-lg mb-4 flex items-center justify-center">
+                      <span className="text-muted-foreground">Copertina libro</span>
+                    </div>
+                    <h3 className="font-semibold text-foreground mb-2">{book.title}</h3>
+                    <p className="text-sm text-muted-foreground">{book.author}</p>
+                  </CardContent>
+                </Card>
+              </StarBorder>
             </motion.div>
           ))}
         </div>
 
         <div className="text-center mt-8">
-          <Button asChild variant="outline" size="lg">
-            <Link to="/libri">Tutti i libri</Link>
-          </Button>
+          <StarBorder
+            as="div"
+            color="hsl(var(--accent))"
+            speed="6s"
+            thickness={3.5}
+            className="inline-block"
+          >
+            <Button asChild variant="outline" size="lg" className="bg-transparent border-0 hover:bg-transparent">
+              <Link to="/libri">Tutti i libri</Link>
+            </Button>
+          </StarBorder>
         </div>
       </section>
 
@@ -213,30 +238,46 @@ export const Home = () => {
                 transition={{ duration: 0.6, delay: index * 0.1 }}
                 viewport={{ once: true }}
               >
-                <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-105">
-                  <CardContent className="p-6">
-                    <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
-                      <img 
-                        src={lesson.image} 
-                        alt={lesson.title}
-                        className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
-                      />
-                    </div>
-                    <div className="inline-block bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full mb-3">
-                      {lesson.day}
-                    </div>
-                    <h3 className="font-semibold text-foreground mb-2">{lesson.title}</h3>
-                    <p className="text-sm text-muted-foreground">{lesson.description}</p>
-                  </CardContent>
-                </Card>
+                <StarBorder
+                  as="div"
+                  color="hsl(var(--accent))"
+                  speed="4s"
+                  thickness={3.5}
+                  className="w-full h-full"
+                >
+                  <Card className="group hover:shadow-lg transition-all duration-300 hover:scale-105 bg-transparent border-0">
+                    <CardContent className="p-6">
+                      <div className="aspect-video bg-muted rounded-lg mb-4 overflow-hidden">
+                        <img 
+                          src={lesson.image} 
+                          alt={lesson.title}
+                          className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-110"
+                        />
+                      </div>
+                      <div className="inline-block bg-primary text-primary-foreground text-sm px-3 py-1 rounded-full mb-3">
+                        {lesson.day}
+                      </div>
+                      <h3 className="font-semibold text-foreground mb-2">{lesson.title}</h3>
+                      <p className="text-sm text-muted-foreground">{lesson.description}</p>
+                    </CardContent>
+                  </Card>
+                </StarBorder>
               </motion.div>
             ))}
           </div>
 
           <div className="text-center mt-8">
-            <Button asChild variant="outline" size="lg">
-              <Link to="/lezioni">Tutte le lezioni</Link>
-            </Button>
+            <StarBorder
+              as="div"
+              color="hsl(var(--primary))"
+              speed="5s"
+              thickness={3.5}
+              className="inline-block"
+            >
+              <Button asChild variant="outline" size="lg" className="bg-transparent border-0 hover:bg-transparent">
+                <Link to="/lezioni">Tutte le lezioni</Link>
+              </Button>
+            </StarBorder>
           </div>
         </div>
       </section>
