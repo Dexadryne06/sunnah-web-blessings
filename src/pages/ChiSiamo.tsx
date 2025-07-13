@@ -52,114 +52,129 @@ const useInView = (threshold = 0.3) => {
 
 export const ChiSiamo = () => {
   return (
-    <div className="relative">
-      {/* Background Image */}
+    <div className="relative min-h-screen">
+      {/* Dynamic Background that follows scroll */}
       <div 
-        className="fixed inset-0 z-0 opacity-30"
+        className="fixed inset-0 z-0"
         style={{
           backgroundImage: `url(${peacefulBg})`,
           backgroundSize: 'cover',
           backgroundPosition: 'center',
-          backgroundAttachment: 'fixed'
+          backgroundAttachment: 'fixed',
+          opacity: 0.15
         }}
       />
       
       {/* Content */}
-      <div className="relative z-10 bg-background/80 backdrop-blur-sm">
+      <div className="relative z-10">
         <div className="container mx-auto px-4 py-16">
-          <div className="max-w-4xl mx-auto">
-            {/* Hero Section */}
-            <motion.div 
-              className="text-center mb-16"
-              initial={{ opacity: 0, y: 30 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ duration: 0.8 }}
-            >
-              <h1 className="text-4xl md:text-5xl font-bold text-foreground mb-6">
-                Chi Siamo
-              </h1>
-              <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-                Masjid As-Sunnah è una comunità unita dalla fede, dedicata all'adorazione, 
-                all'apprendimento e al servizio alla società.
-              </p>
-            </motion.div>
+          {/* Hero Section */}
+          <motion.div 
+            className="text-center mb-32"
+            initial={{ opacity: 0, y: 30 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.8 }}
+          >
+            <h1 className="text-5xl md:text-7xl font-bold text-foreground mb-8 tracking-tight">
+              Chi Siamo
+            </h1>
+            <p className="text-2xl text-muted-foreground max-w-3xl mx-auto leading-relaxed">
+              Masjid As-Sunnah è una comunità unita dalla fede, dedicata all'adorazione, 
+              all'apprendimento e al servizio alla società.
+            </p>
+          </motion.div>
 
-            {/* Story Sections */}
-            <div className="space-y-16">
-              {storyContent.map((section, index) => {
-                const [ref, isInView] = useInView();
-                
-                return (
-                  <motion.div
-                    key={index}
-                    ref={ref}
-                    initial={{ opacity: 0, y: 50 }}
-                    animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 50 }}
-                    transition={{ duration: 0.8, delay: 0.2 }}
-                  >
-                    <Card className="bg-background/90 backdrop-blur-sm shadow-lg hover:shadow-xl transition-shadow duration-300">
-                      <CardContent className="p-8">
-                        <motion.h2 
-                          className="text-2xl font-semibold text-foreground mb-4"
-                          initial={{ opacity: 0 }}
-                          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                          transition={{ duration: 0.6, delay: 0.4 }}
-                        >
-                          {section.title}
-                        </motion.h2>
-                        <motion.p 
-                          className="text-muted-foreground leading-relaxed text-lg"
-                          initial={{ opacity: 0 }}
-                          animate={isInView ? { opacity: 1 } : { opacity: 0 }}
-                          transition={{ duration: 0.6, delay: 0.6 }}
-                        >
-                          {section.content}
-                        </motion.p>
-                      </CardContent>
-                    </Card>
-                  </motion.div>
-                );
-              })}
-            </div>
-
-            {/* Values Grid */}
-            <motion.div
-              className="mt-16"
-              initial={{ opacity: 0 }}
-              whileInView={{ opacity: 1 }}
-              transition={{ duration: 0.8 }}
-              viewport={{ once: true }}
-            >
-              <Card className="bg-background/90 backdrop-blur-sm shadow-lg">
-                <CardContent className="p-8">
-                  <h2 className="text-2xl font-semibold text-foreground mb-6 text-center">
-                    I Nostri Pilastri
-                  </h2>
-                  <div className="grid md:grid-cols-2 gap-6">
-                    {[
-                      { title: "Unità e Fratellanza", desc: "Crediamo nell'importanza dell'unità tra i musulmani" },
-                      { title: "Conoscenza e Educazione", desc: "Promuoviamo l'apprendimento continuo del Corano e della Sunnah" },
-                      { title: "Servizio alla Comunità", desc: "Ci dedichiamo ad aiutare chi è nel bisogno" },
-                      { title: "Accoglienza e Inclusione", desc: "Accogliamo tutti coloro che desiderano avvicinarsi all'Islam" }
-                    ].map((value, index) => (
-                      <motion.div
-                        key={index}
-                        className="p-4 rounded-lg bg-muted/30"
-                        initial={{ opacity: 0, scale: 0.9 }}
-                        whileInView={{ opacity: 1, scale: 1 }}
-                        transition={{ duration: 0.5, delay: index * 0.1 }}
-                        viewport={{ once: true }}
-                        whileHover={{ scale: 1.02 }}
-                      >
-                        <h3 className="text-lg font-medium text-foreground mb-2">{value.title}</h3>
-                        <p className="text-muted-foreground text-sm">{value.desc}</p>
-                      </motion.div>
-                    ))}
+          {/* Journey Timeline */}
+          <div className="max-w-4xl mx-auto space-y-32">
+            {storyContent.map((section, index) => {
+              const [ref, isInView] = useInView(0.2);
+              const isEven = index % 2 === 0;
+              
+              return (
+                <motion.div
+                  key={index}
+                  ref={ref}
+                  className={`flex flex-col lg:flex-row items-center gap-12 ${isEven ? 'lg:flex-row' : 'lg:flex-row-reverse'}`}
+                  initial={{ opacity: 0, x: isEven ? -100 : 100 }}
+                  animate={isInView ? { opacity: 1, x: 0 } : { opacity: 0, x: isEven ? -100 : 100 }}
+                  transition={{ duration: 1, delay: 0.2 }}
+                >
+                  {/* Content */}
+                  <div className="flex-1 space-y-6">
+                    <motion.div
+                      initial={{ opacity: 0, y: 30 }}
+                      animate={isInView ? { opacity: 1, y: 0 } : { opacity: 0, y: 30 }}
+                      transition={{ duration: 0.8, delay: 0.4 }}
+                    >
+                      <div className="inline-block bg-primary/10 text-primary px-4 py-2 rounded-full text-sm font-medium mb-4">
+                        Passo {index + 1}
+                      </div>
+                      <h2 className="text-3xl font-bold text-foreground mb-6">
+                        {section.title}
+                      </h2>
+                      <p className="text-lg text-muted-foreground leading-relaxed">
+                        {section.content}
+                      </p>
+                    </motion.div>
                   </div>
-                </CardContent>
-              </Card>
-            </motion.div>
+
+                  {/* Visual Element */}
+                  <motion.div
+                    className="flex-1 lg:max-w-md"
+                    initial={{ opacity: 0, scale: 0.8 }}
+                    animate={isInView ? { opacity: 1, scale: 1 } : { opacity: 0, scale: 0.8 }}
+                    transition={{ duration: 0.8, delay: 0.6 }}
+                  >
+                    <div className="aspect-square bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl p-8 flex items-center justify-center">
+                      <div className="w-full h-full bg-gradient-to-br from-primary/20 to-primary/5 rounded-2xl flex items-center justify-center">
+                        <div className="text-center">
+                          <div className="w-16 h-16 bg-primary/20 rounded-full flex items-center justify-center mx-auto mb-4">
+                            <span className="text-2xl font-bold text-primary">{index + 1}</span>
+                          </div>
+                          <h3 className="text-lg font-semibold text-foreground">{section.title}</h3>
+                        </div>
+                      </div>
+                    </div>
+                  </motion.div>
+                </motion.div>
+              );
+            })}
           </div>
+
+          {/* Final Values Section */}
+          <motion.div
+            className="mt-32 text-center"
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.8 }}
+            viewport={{ once: true }}
+          >
+            <h2 className="text-4xl font-bold text-foreground mb-12">
+              I Nostri Pilastri
+            </h2>
+            <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-8 max-w-6xl mx-auto">
+              {[
+                { title: "Unità e Fratellanza", desc: "Crediamo nell'importanza dell'unità tra i musulmani", icon: "🤝" },
+                { title: "Conoscenza e Educazione", desc: "Promuoviamo l'apprendimento continuo del Corano e della Sunnah", icon: "📚" },
+                { title: "Servizio alla Comunità", desc: "Ci dedichiamo ad aiutare chi è nel bisogno", icon: "❤️" },
+                { title: "Accoglienza e Inclusione", desc: "Accogliamo tutti coloro che desiderano avvicinarsi all'Islam", icon: "🌟" }
+              ].map((value, index) => (
+                <motion.div
+                  key={index}
+                  className="p-6 rounded-2xl bg-background/50 backdrop-blur-sm border border-border/50 hover:border-primary/30 transition-all duration-300"
+                  initial={{ opacity: 0, y: 50 }}
+                  whileInView={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.6, delay: index * 0.1 }}
+                  viewport={{ once: true }}
+                  whileHover={{ scale: 1.05, backgroundColor: "hsl(var(--primary) / 0.05)" }}
+                >
+                  <div className="text-4xl mb-4">{value.icon}</div>
+                  <h3 className="text-xl font-semibold text-foreground mb-3">{value.title}</h3>
+                  <p className="text-muted-foreground">{value.desc}</p>
+                </motion.div>
+              ))}
+            </div>
+          </motion.div>
         </div>
       </div>
     </div>

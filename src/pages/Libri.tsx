@@ -118,7 +118,7 @@ export const Libri = () => {
               <Button
                 variant={category === "Tutti" ? "default" : "outline"}
                 size="sm"
-                className="rounded-full bg-transparent border-0 hover:bg-transparent"
+                className="rounded-full bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground"
               >
                 {category}
               </Button>
@@ -172,7 +172,7 @@ export const Libri = () => {
                     thickness={2}
                     className="flex-1"
                   >
-                    <Button size="sm" className="w-full gap-2 bg-transparent border-0 hover:bg-transparent">
+                    <Button size="sm" className="w-full gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground">
                       <Download className="h-4 w-4" />
                       Scarica
                     </Button>

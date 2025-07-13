@@ -45,6 +45,7 @@
 .star-border-container:hover .border-gradient-top {
   opacity: 0.9;
   animation-play-state: running;
+  animation-fill-mode: forwards;
 }
 
 .inner-content {

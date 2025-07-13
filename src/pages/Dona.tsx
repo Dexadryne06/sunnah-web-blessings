@@ -5,6 +5,7 @@ import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
 import sadaqaTreeImg from "@/assets/sadaqa-tree.jpg";
 import mosqueHeroImg from "@/assets/mosque-hero.jpg";
+import { useState } from "react";
 
 const bankDetails = {
   beneficiary: "Associazione Masjid As-Sunnah",
@@ -44,6 +45,16 @@ const copyToClipboard = (text: string, label: string) => {
 };
 
 export const Dona = () => {
+  const [isLiked, setIsLiked] = useState(false);
+
+  const handleHeartClick = () => {
+    setIsLiked(!isLiked);
+    toast({
+      title: isLiked ? "Rimosso dai preferiti" : "Aggiunto ai preferiti",
+      description: isLiked ? "Hai rimosso questa causa dai tuoi preferiti" : "Grazie per aver mostrato apprezzamento per questa nobile causa",
+    });
+  };
+
   return (
     <div className="container mx-auto px-4 py-16">
       {/* Hero Section with Tree Image */}
@@ -89,8 +100,14 @@ export const Dona = () => {
                 </p>
               </div>
               <div className="text-center">
-                <div className="w-48 h-48 mx-auto bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center">
-                  <Heart className="h-16 w-16 text-primary" />
+                <div className="w-48 h-48 mx-auto bg-gradient-to-br from-primary/10 to-primary/20 rounded-full flex items-center justify-center cursor-pointer transition-all duration-300 hover:scale-105" onClick={handleHeartClick}>
+                  <Heart 
+                    className={`h-16 w-16 transition-all duration-300 ${
+                      isLiked 
+                        ? 'text-red-500 fill-red-500 scale-110' 
+                        : 'text-primary hover:text-red-500'
+                    }`}
+                  />
                 </div>
               </div>
             </div>
@@ -210,7 +227,7 @@ export const Dona = () => {
                 thickness={3.5}
                 className="inline-block"
               >
-                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent" size="lg">
+                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground" size="lg">
                   <Mail className="h-4 w-4" />
                   Invia Ricevuta via Email
                 </Button>

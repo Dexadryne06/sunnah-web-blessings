@@ -206,7 +206,7 @@ export const Contattaci = () => {
                   <Button 
                     type="submit" 
                     size="lg" 
-                    className="w-full gap-2 bg-transparent border-0 hover:bg-transparent"
+                    className="w-full gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
