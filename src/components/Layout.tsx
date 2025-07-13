@@ -18,7 +18,7 @@ export const Layout = () => {
       <main className="flex-1 relative z-10">
         <Outlet />
       </main>
-      <Footer />
+      <Footer className="relative z-10" />
     </div>
   );
 };

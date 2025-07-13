@@ -103,10 +103,22 @@ export const Libri = () => {
         </p>
       </div>
 
+      {/* Language Toggle */}
+      <div className="mb-8 flex justify-center">
+        <div className="flex items-center bg-muted/30 rounded-full p-1 backdrop-blur-sm">
+          <button className="px-4 py-2 rounded-full bg-primary text-primary-foreground font-medium transition-colors">
+            Italiano
+          </button>
+          <button className="px-4 py-2 rounded-full text-muted-foreground hover:text-foreground transition-colors">
+            English
+          </button>
+        </div>
+      </div>
+
       {/* Category Filter */}
       <div className="mb-12">
         <div className="flex flex-wrap gap-2 justify-center">
-          {categories.map((category) => (
+          {["Tutti", "Qur'an", "Hadith", "Aqeedah", "Fiqh"].map((category) => (
             <StarBorder
               key={category}
               as="div"

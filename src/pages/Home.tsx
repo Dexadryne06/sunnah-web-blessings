@@ -72,7 +72,7 @@ export const Home = () => {
     >
       {/* Hero Section */}
       <motion.section 
-        className="relative bg-gradient-to-b from-primary/5 to-background py-20 overflow-hidden"
+        className="relative py-20 overflow-hidden"
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 1, delay: 0.2 }}
@@ -124,7 +124,7 @@ export const Home = () => {
           </p>
         </div>
         
-        <Card className="max-w-3xl mx-auto">
+        <Card className="max-w-3xl mx-auto shadow-2xl border-2 border-primary/20 rounded-2xl backdrop-blur-sm bg-background/80">
           <CardHeader className="text-center">
             <CardTitle className="flex items-center justify-center gap-2">
               Oggi - {new Date().toLocaleDateString('it-IT', { 

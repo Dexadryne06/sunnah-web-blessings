@@ -53,17 +53,6 @@ const useInView = (threshold = 0.3) => {
 export const ChiSiamo = () => {
   return (
     <div className="relative min-h-screen">
-      {/* Dynamic Background that follows scroll */}
-      <div 
-        className="fixed inset-0 z-0"
-        style={{
-          backgroundImage: `url(${peacefulBg})`,
-          backgroundSize: 'cover',
-          backgroundPosition: 'center',
-          backgroundAttachment: 'fixed',
-          opacity: 0.15
-        }}
-      />
       
       {/* Content */}
       <div className="relative z-10">
