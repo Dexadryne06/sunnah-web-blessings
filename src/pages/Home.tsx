@@ -151,7 +151,7 @@ export const Home = () => {
                 thickness={3.5}
                 className="inline-block"
               >
-                <Button className=" border-0 hover:bg-transparent">
+                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent">
                   <Download className="h-4 w-4" />
                   Scarica PDF del mese
                 </Button>
