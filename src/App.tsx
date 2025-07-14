@@ -10,6 +10,8 @@ import { Libri } from "./pages/Libri";
 import { Lezioni } from "./pages/Lezioni";
 import { Dona } from "./pages/Dona";
 import { Contattaci } from "./pages/Contattaci";
+import { CookiePolicy } from "./pages/CookiePolicy";
+import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -28,6 +30,8 @@ const App = () => (
             <Route path="lezioni" element={<Lezioni />} />
             <Route path="dona" element={<Dona />} />
             <Route path="contattaci" element={<Contattaci />} />
+            <Route path="cookie-policy" element={<CookiePolicy />} />
+            <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
           <Route path="*" element={<NotFound />} />
         </Routes>

@@ -13,6 +13,14 @@ export const Footer = ({ className = "" }: { className?: string }) => {
             <span>© {new Date().getFullYear()} Masjid As-Sunnah. Tutti i diritti riservati.</span>
             <span className="hidden md:inline">•</span>
             <span>Un luogo di adorazione, apprendimento e comunità</span>
+            <div className="flex gap-4 text-xs">
+              <a href="/privacy-policy" className="hover:text-primary underline">
+                Privacy Policy
+              </a>
+              <a href="/cookie-policy" className="hover:text-primary underline">
+                Cookie Policy
+              </a>
+            </div>
           </div>
           <div className="text-xs text-muted-foreground/60">
             <span>Realizzato con 💚 da{" "}

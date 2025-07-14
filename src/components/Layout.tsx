@@ -1,6 +1,7 @@
 import { Outlet } from "react-router-dom";
 import { Navigation } from "./Navigation";
 import { Footer } from "./Footer";
+import { CookieBanner } from "./CookieBanner";
 
 export const Layout = () => {
   return (
@@ -19,6 +20,7 @@ export const Layout = () => {
         <Outlet />
       </main>
       <Footer className="relative z-10" />
+      <CookieBanner />
     </div>
   );
 };
