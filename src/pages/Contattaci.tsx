@@ -160,7 +160,7 @@ export const Contattaci = () => {
                 <CardTitle className="text-xl">Invia un Messaggio</CardTitle>
               </CardHeader>
               <CardContent>
-                <form onSubmit={handleSubmit} className="space-y-4">
+                <form onSubmit={handleSubmit} className="space-y-4 h-full flex flex-col">
                   <div>
                     <Label htmlFor="name">Nome *</Label>
                     <Input
