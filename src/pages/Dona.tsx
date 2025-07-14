@@ -80,7 +80,7 @@ export const Dona = () => {
 
       {/* Importance of Sadaqa Jariyah */}
       <section className="mb-16">
-        <Card className="max-w-4xl mx-auto">
+        <Card className="max-w-4xl mx-auto rounded-3xl">
           <CardContent className="p-8">
             <h2 className="text-3xl font-bold text-foreground mb-6 text-center">
               Il Valore della Sadaqa Jariyah
@@ -146,7 +146,7 @@ export const Dona = () => {
 
       {/* Bank Details */}
       <section className="mb-16">
-        <Card className="max-w-2xl mx-auto">
+        <Card className="max-w-2xl mx-auto rounded-3xl">
           <CardHeader>
             <CardTitle className="text-2xl text-center">Dati Bancari per Donazioni</CardTitle>
           </CardHeader>
