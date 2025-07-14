@@ -4,7 +4,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
-import { MapPin, Phone, Mail, Clock, Send } from "lucide-react";
+import { MapPin, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
 
@@ -15,9 +15,9 @@ const contactInfo = [
     details: ["Via dell'Esempio 123", "00100 Roma (RM)", "Italia"]
   },
   {
-    icon: Phone,
-    title: "Telefono",
-    details: ["+39 06 1234567", "Disponibile dalle 9:00 alle 18:00"]
+    icon: MessageCircle,
+    title: "WhatsApp",
+    details: ["+39 123 456 7890", "Disponibile tutti i giorni"]
   },
   {
     icon: Mail,
@@ -125,10 +125,11 @@ export const Contattaci = () => {
           {/* Map Placeholder */}
           <Card>
             <CardContent className="p-6">
-              <div className="aspect-video bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center">
+              <div className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center">
                 <div className="text-center">
-                  <MapPin className="h-12 w-12 text-primary mx-auto mb-2" />
-                  <p className="text-muted-foreground">Mappa della Moschea</p>
+                  <MapPin className="h-16 w-16 text-primary mx-auto mb-3" />
+                  <p className="text-muted-foreground text-lg">Mappa della Moschea</p>
+                  <p className="text-muted-foreground text-sm mt-2">Via dell'Esempio 123, Roma</p>
                 </div>
               </div>
             </CardContent>
@@ -239,24 +240,6 @@ export const Contattaci = () => {
         </div>
       </div>
 
-      {/* Additional Information */}
-      <div className="mt-16 text-center">
-        <Card className="max-w-2xl mx-auto">
-          <CardContent className="p-8">
-            <h2 className="text-2xl font-semibold text-foreground mb-4">
-              Come Possiamo Aiutarti
-            </h2>
-            <div className="text-left space-y-3 text-muted-foreground">
-              <p>• Informazioni sulle attività della moschea</p>
-              <p>• Consulenza spirituale e religiosa</p>
-              <p>• Organizzazione di eventi e cerimonie</p>
-              <p>• Supporto per nuovi convertiti</p>
-              <p>• Collaborazioni e partnership</p>
-              <p>• Donazioni e contributi</p>
-            </div>
-          </CardContent>
-        </Card>
-      </div>
     </div>
   );
 };

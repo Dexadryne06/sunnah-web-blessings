@@ -15,7 +15,15 @@ export const Footer = ({ className = "" }: { className?: string }) => {
             <span>Un luogo di adorazione, apprendimento e comunità</span>
           </div>
           <div className="text-xs text-muted-foreground/60">
-            <span>Realizzato con 💚 per la comunità musulmana</span>
+            <span>Realizzato con 💚 da{" "}
+              <a 
+                href="mailto:admin@yusuf-ai.xyz" 
+                className="underline hover:text-primary transition-colors"
+              >
+                Yusuf
+              </a>
+              {" "}per la comunità musulmana
+            </span>
           </div>
         </div>
       </div>
