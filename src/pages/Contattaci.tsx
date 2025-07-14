@@ -12,22 +12,26 @@ const contactInfo = [
   {
     icon: MapPin,
     title: "Indirizzo",
-    details: ["Via dell'Esempio 123", "00100 Roma (RM)", "Italia"]
+    details: ["Via dell'Esempio 123", "00100 Roma (RM)"],
+    action: "Visualizza su Maps"
   },
   {
     icon: MessageCircle,
     title: "WhatsApp",
-    details: ["+39 123 456 7890", "Disponibile tutti i giorni"]
+    details: ["+39 123 456 7890"],
+    action: "Invia messaggio"
   },
   {
     icon: Mail,
     title: "Email",
-    details: ["info@masjidassunnah.it", "imam@masjidassunnah.it"]
+    details: ["info@masjidassunnah.it"],
+    action: "Invia email"
   },
   {
     icon: Clock,
-    title: "Orari di Apertura",
-    details: ["Tutti i giorni: 5:00 - 22:00", "Ufficio: Lun-Ven 9:00 - 18:00"]
+    title: "Orari",
+    details: ["Tutti i giorni: 5:00 - 22:00"],
+    action: null
   }
 ];
 
@@ -35,7 +39,6 @@ export const Contattaci = () => {
   const [formData, setFormData] = useState({
     name: "",
     email: "",
-    subject: "",
     message: ""
   });
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -64,7 +67,6 @@ export const Contattaci = () => {
     setFormData({
       name: "",
       email: "",
-      subject: "",
       message: ""
     });
 
@@ -79,74 +81,88 @@ export const Contattaci = () => {
           Contattaci
         </h1>
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
-          Siamo qui per rispondere alle tue domande e aiutarti nel tuo percorso spirituale
+          Siamo qui per rispondere alle tue domande
         </p>
       </div>
 
-      <div className="grid lg:grid-cols-2 gap-12 max-w-6xl mx-auto">
-        {/* Contact Information */}
-        <div className="space-y-8">
-          <div>
-            <h2 className="text-2xl font-bold text-foreground mb-6">
-              Informazioni di Contatto
-            </h2>
-            <div className="space-y-6">
-              {contactInfo.map((info, index) => (
-                <StarBorder
-                  key={index}
-                  as="div"
-                  color="hsl(var(--primary))"
-                  speed="4s"
-                  thickness={3.5}
-                  className="w-full"
-                >
-                  <Card className="bg-transparent border-0">
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center flex-shrink-0">
-                          <info.icon className="h-6 w-6 text-primary" />
-                        </div>
-                        <div>
-                          <h3 className="font-semibold text-foreground mb-2">{info.title}</h3>
-                          {info.details.map((detail, detailIndex) => (
-                            <p key={detailIndex} className="text-muted-foreground text-sm">
-                              {detail}
-                            </p>
-                          ))}
-                        </div>
-                      </div>
-                    </CardContent>
-                  </Card>
-                </StarBorder>
-              ))}
-            </div>
-          </div>
-
-          {/* Map Placeholder */}
-          <Card>
-            <CardContent className="p-6">
-              <div className="aspect-[4/3] bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center">
-                <div className="text-center">
-                  <MapPin className="h-16 w-16 text-primary mx-auto mb-3" />
-                  <p className="text-muted-foreground text-lg">Mappa della Moschea</p>
-                  <p className="text-muted-foreground text-sm mt-2">Via dell'Esempio 123, Roma</p>
+      {/* Contact Cards */}
+      <div className="grid md:grid-cols-2 lg:grid-cols-4 gap-6 mb-16">
+        {contactInfo.map((info, index) => (
+          <StarBorder
+            key={index}
+            as="div"
+            color="hsl(var(--primary))"
+            speed="4s"
+            thickness={3.5}
+            className="w-full h-full"
+          >
+            <Card className="bg-transparent border-0 h-full hover:scale-105 transition-transform duration-300 cursor-pointer group">
+              <CardContent className="p-6 text-center h-full flex flex-col justify-center">
+                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
+                  <info.icon className="h-8 w-8 text-primary" />
                 </div>
-              </div>
-            </CardContent>
-          </Card>
+                <h3 className="font-semibold text-foreground mb-3">{info.title}</h3>
+                {info.details.map((detail, detailIndex) => (
+                  <p key={detailIndex} className="text-muted-foreground text-sm mb-2">
+                    {detail}
+                  </p>
+                ))}
+                {info.action && (
+                  <Button variant="ghost" size="sm" className="mt-2 text-primary hover:text-primary">
+                    {info.action}
+                  </Button>
+                )}
+              </CardContent>
+            </Card>
+          </StarBorder>
+        ))}
+      </div>
+
+      <div className="grid lg:grid-cols-3 gap-12 max-w-7xl mx-auto">
+        {/* Large Map */}
+        <div className="lg:col-span-2">
+          <StarBorder
+            as="div"
+            color="hsl(var(--accent))"
+            speed="5s"
+            thickness={3.5}
+            className="w-full h-full"
+          >
+            <Card className="bg-transparent border-0 h-full">
+              <CardContent className="p-6 h-full">
+                <div className="aspect-[16/10] bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center min-h-[400px]">
+                  <div className="text-center">
+                    <MapPin className="h-20 w-20 text-primary mx-auto mb-4" />
+                    <h3 className="text-2xl font-semibold text-foreground mb-2">Masjid As-Sunnah</h3>
+                    <p className="text-muted-foreground text-lg">Via dell'Esempio 123, Roma</p>
+                    <Button className="mt-4" variant="outline">
+                      <MapPin className="h-4 w-4 mr-2" />
+                      Apri in Google Maps
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          </StarBorder>
         </div>
 
-        {/* Contact Form */}
+        {/* Simplified Contact Form */}
         <div>
-          <Card>
-            <CardHeader>
-              <CardTitle className="text-2xl">Invia un Messaggio</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-6">
-                <div className="grid md:grid-cols-2 gap-4">
+          <StarBorder
+            as="div"
+            color="hsl(var(--primary))"
+            speed="4s"
+            thickness={3.5}
+            className="w-full h-full"
+          >
+            <Card className="bg-transparent border-0 h-full">
+              <CardHeader>
+                <CardTitle className="text-xl">Invia un Messaggio</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <form onSubmit={handleSubmit} className="space-y-4">
                   <div>
-                    <Label htmlFor="name">Nome Completo *</Label>
+                    <Label htmlFor="name">Nome *</Label>
                     <Input
                       id="name"
                       name="name"
@@ -157,6 +173,7 @@ export const Contattaci = () => {
                       className="mt-1"
                     />
                   </div>
+                  
                   <div>
                     <Label htmlFor="email">Email *</Label>
                     <Input
@@ -170,44 +187,24 @@ export const Contattaci = () => {
                       className="mt-1"
                     />
                   </div>
-                </div>
 
-                <div>
-                  <Label htmlFor="subject">Oggetto</Label>
-                  <Input
-                    id="subject"
-                    name="subject"
-                    value={formData.subject}
-                    onChange={handleInputChange}
-                    placeholder="Oggetto del messaggio"
-                    className="mt-1"
-                  />
-                </div>
+                  <div>
+                    <Label htmlFor="message">Messaggio *</Label>
+                    <Textarea
+                      id="message"
+                      name="message"
+                      value={formData.message}
+                      onChange={handleInputChange}
+                      required
+                      placeholder="Scrivi qui il tuo messaggio..."
+                      className="mt-1 min-h-32"
+                    />
+                  </div>
 
-                <div>
-                  <Label htmlFor="message">Messaggio *</Label>
-                  <Textarea
-                    id="message"
-                    name="message"
-                    value={formData.message}
-                    onChange={handleInputChange}
-                    required
-                    placeholder="Scrivi qui il tuo messaggio..."
-                    className="mt-1 min-h-32"
-                  />
-                </div>
-
-                <StarBorder
-                  as="div"
-                  color="hsl(var(--primary))"
-                  speed="4s"
-                  thickness={3.5}
-                  className="w-full"
-                >
                   <Button 
                     type="submit" 
                     size="lg" 
-                    className="w-full gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground"
+                    className="w-full gap-2"
                     disabled={isSubmitting}
                   >
                     {isSubmitting ? (
@@ -219,27 +216,12 @@ export const Contattaci = () => {
                       </>
                     )}
                   </Button>
-                </StarBorder>
-              </form>
-            </CardContent>
-          </Card>
-
-          {/* Response Time Info */}
-          <Card className="mt-6">
-            <CardContent className="p-6">
-              <h3 className="font-semibold text-foreground mb-2">
-                Tempi di Risposta
-              </h3>
-              <p className="text-muted-foreground text-sm leading-relaxed">
-                Cerchiamo di rispondere a tutti i messaggi entro 24 ore durante i giorni feriali. 
-                Per questioni urgenti, ti consigliamo di contattarci direttamente per telefono 
-                durante gli orari di apertura dell'ufficio.
-              </p>
-            </CardContent>
-          </Card>
+                </form>
+              </CardContent>
+            </Card>
+          </StarBorder>
         </div>
       </div>
-
     </div>
   );
 };
