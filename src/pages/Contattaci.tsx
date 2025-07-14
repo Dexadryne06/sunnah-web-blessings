@@ -128,7 +128,7 @@ export const Contattaci = () => {
             thickness={3.5}
             className="w-full h-full"
           >
-            <Card className="bg-transparent border-0 h-full">
+            <Card className="bg-transparent border-0 h-[500px]">
               <CardContent className="p-6 h-full">
                 <div className="aspect-[16/10] bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center min-h-[400px]">
                   <div className="text-center">
@@ -155,7 +155,7 @@ export const Contattaci = () => {
             thickness={3.5}
             className="w-full h-full"
           >
-            <Card className="bg-transparent border-0 h-full">
+            <Card className="bg-transparent border-0 h-[500px]">
               <CardHeader>
                 <CardTitle className="text-xl">Invia un Messaggio</CardTitle>
               </CardHeader>
