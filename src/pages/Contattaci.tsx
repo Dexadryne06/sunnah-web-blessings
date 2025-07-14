@@ -97,7 +97,7 @@ export const Contattaci = () => {
             className="w-full h-full"
           >
             <Card className="bg-transparent border-0 h-full hover:scale-105 transition-transform duration-300 cursor-pointer group">
-              <CardContent className="p-6 text-center h-full flex flex-col justify-center">
+              <CardContent className="p-6 text-center h-full flex flex-col justify-center min-h-[240px]">
                 <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4 group-hover:bg-primary/20 transition-colors">
                   <info.icon className="h-8 w-8 text-primary" />
                 </div>
