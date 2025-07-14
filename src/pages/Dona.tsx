@@ -130,8 +130,8 @@ export const Dona = () => {
               thickness={3.5}
               className="w-full h-full"
             >
-              <Card className="text-center hover:shadow-lg transition-shadow bg-transparent border-0">
-                <CardContent className="p-6">
+              <Card className="text-center hover:shadow-lg transition-shadow bg-transparent border-0 h-[200px]">
+                <CardContent className="p-6 h-full flex flex-col justify-center">
                   <div className="w-16 h-16 mx-auto mb-4 bg-primary/10 rounded-full flex items-center justify-center">
                     <area.icon className="h-8 w-8 text-primary" />
                   </div>
