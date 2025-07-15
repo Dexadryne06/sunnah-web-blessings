@@ -1,6 +1,11 @@
+import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Calendar, Clock, MapPin, User } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Calendar, Clock, MapPin, User, Users } from "lucide-react";
+import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
 
 // Mock data for lessons
@@ -124,6 +129,66 @@ const getLevelColor = (level: string) => {
 };
 
 export const Lezioni = () => {
+  const [childFormData, setChildFormData] = useState({
+    parentName: "",
+    parentEmail: "",
+    childName: "",
+    childAge: "",
+    phone: ""
+  });
+  const [isSubmittingChild, setIsSubmittingChild] = useState(false);
+
+  const handleChildInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    setChildFormData(prev => ({
+      ...prev,
+      [name]: value
+    }));
+  };
+
+  const handleChildSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setIsSubmittingChild(true);
+
+    try {
+      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/0b973509-94db-4994-9f4c-1fadbcaea442", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          parentName: childFormData.parentName,
+          parentEmail: childFormData.parentEmail,
+          childName: childFormData.childName,
+          childAge: childFormData.childAge,
+          phone: childFormData.phone,
+          timestamp: new Date().toISOString()
+        }),
+      });
+
+      toast({
+        title: "Registrazione Inviata!",
+        description: "Grazie per aver registrato tuo figlio. Ti contatteremo presto.",
+      });
+
+      // Reset form
+      setChildFormData({
+        parentName: "",
+        parentEmail: "",
+        childName: "",
+        childAge: "",
+        phone: ""
+      });
+    } catch (error) {
+      toast({
+        title: "Errore",
+        description: "Si è verificato un errore. Riprova più tardi.",
+        variant: "destructive",
+      });
+    }
+
+    setIsSubmittingChild(false);
+  };
   return (
     <div className="container mx-auto px-4 py-16">
       {/* Header */}
@@ -134,6 +199,119 @@ export const Lezioni = () => {
         <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
           Partecipa alle nostre lezioni settimanali e approfondisci la tua conoscenza dell'Islam
         </p>
+      </div>
+
+      {/* Child Registration Form */}
+      <div className="max-w-4xl mx-auto mb-16">
+        <div className="text-center mb-8">
+          <h2 className="text-3xl font-bold text-foreground mb-4">Registra tuo figlio alle lezioni</h2>
+          <p className="text-muted-foreground">Compila il form per registrare tuo figlio al programma settimanale</p>
+        </div>
+        
+        <StarBorder
+          as="div"
+          color="hsl(var(--accent))"
+          speed="6s"
+          thickness={3.5}
+          className="w-full h-full"
+        >
+          <Card className="bg-transparent border-0">
+            <CardHeader>
+              <CardTitle className="text-xl flex items-center gap-2">
+                <Users className="h-5 w-5" />
+                Registrazione Bambini
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleChildSubmit} className="grid md:grid-cols-2 gap-6">
+                <div>
+                  <Label htmlFor="parentName">Nome Genitore *</Label>
+                  <Input
+                    id="parentName"
+                    name="parentName"
+                    value={childFormData.parentName}
+                    onChange={handleChildInputChange}
+                    required
+                    placeholder="Nome del genitore"
+                    className="mt-1"
+                  />
+                </div>
+                
+                <div>
+                  <Label htmlFor="parentEmail">Email Genitore *</Label>
+                  <Input
+                    id="parentEmail"
+                    name="parentEmail"
+                    type="email"
+                    value={childFormData.parentEmail}
+                    onChange={handleChildInputChange}
+                    required
+                    placeholder="email@esempio.com"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="childName">Nome Bambino *</Label>
+                  <Input
+                    id="childName"
+                    name="childName"
+                    value={childFormData.childName}
+                    onChange={handleChildInputChange}
+                    required
+                    placeholder="Nome del bambino"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div>
+                  <Label htmlFor="childAge">Età Bambino *</Label>
+                  <Input
+                    id="childAge"
+                    name="childAge"
+                    type="number"
+                    value={childFormData.childAge}
+                    onChange={handleChildInputChange}
+                    required
+                    placeholder="Età"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Label htmlFor="phone">Telefono</Label>
+                  <Input
+                    id="phone"
+                    name="phone"
+                    type="tel"
+                    value={childFormData.phone}
+                    onChange={handleChildInputChange}
+                    placeholder="Numero di telefono"
+                    className="mt-1"
+                  />
+                </div>
+
+                <div className="md:col-span-2">
+                  <Button 
+                    type="submit" 
+                    size="lg" 
+                    className="w-full gap-2"
+                    disabled={isSubmittingChild}
+                  >
+                    {isSubmittingChild ? (
+                      "Registrazione in corso..."
+                    ) : (
+                      <>
+                        <Users className="h-4 w-4" />
+                        Registra Bambino
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </StarBorder>
       </div>
 
       {/* Weekly Schedule */}
