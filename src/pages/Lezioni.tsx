@@ -217,7 +217,7 @@ export const Lezioni = () => {
         >
           <Card className="bg-transparent border-0">
             <CardHeader>
-              <CardTitle className="text-xl flex items-center gap-2">
+              <CardTitle className="text-xl flex items-center justify-center gap-2">
                 <Users className="h-5 w-5" />
                 Registrazione Bambini
               </CardTitle>
