@@ -122,6 +122,9 @@ export const Home = () => {
           <p className="text-muted-foreground">
             Orari aggiornati per le cinque preghiere quotidiane
           </p>
+          <p className="text-sm text-muted-foreground">
+      Validi solo per Bergamo e provincia
+    </p>
         </div>
         
         <Card className="max-w-3xl mx-auto shadow-2xl border-2 border-primary/20 rounded-2xl backdrop-blur-sm bg-background/80">
