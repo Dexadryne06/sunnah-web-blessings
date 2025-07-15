@@ -151,7 +151,7 @@ export const Lezioni = () => {
     setIsSubmittingChild(true);
 
     try {
-      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/0b973509-94db-4994-9f4c-1fadbcaea442", {
+      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook-test/0b973509-94db-4994-9f4c-1fadbcaea442", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
