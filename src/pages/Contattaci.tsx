@@ -57,7 +57,7 @@ export const Contattaci = () => {
     setIsSubmitting(true);
 
     try {
-      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook-test/a966bf4f-96d0-4c94-bbde-9d09719d2093", {
+      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/a966bf4f-96d0-4c94-bbde-9d09719d2093", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
