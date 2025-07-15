@@ -7,6 +7,7 @@ import { Layout } from "./components/Layout";
 import { Home } from "./pages/Home";
 import { ChiSiamo } from "./pages/ChiSiamo";
 import { Libri } from "./pages/Libri";
+import { AcquistaOPrendiInPrestito } from "./pages/AcquistaOPrendiInPrestito";
 import { Lezioni } from "./pages/Lezioni";
 import { Dona } from "./pages/Dona";
 import { Contattaci } from "./pages/Contattaci";
@@ -27,6 +28,7 @@ const App = () => (
             <Route index element={<Home />} />
             <Route path="chi-siamo" element={<ChiSiamo />} />
             <Route path="libri" element={<Libri />} />
+            <Route path="acquista-o-prendi-in-prestito" element={<AcquistaOPrendiInPrestito />} />
             <Route path="lezioni" element={<Lezioni />} />
             <Route path="dona" element={<Dona />} />
             <Route path="contattaci" element={<Contattaci />} />

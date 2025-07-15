@@ -167,6 +167,15 @@ export const Libri = () => {
         <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed">
           {content.explanation}
         </p>
+        <p className="text-sm text-muted-foreground max-w-3xl mx-auto leading-relaxed mt-4">
+          Vuoi prendere in prestito o comprare dei libri?{' '}
+          <a 
+            href="/acquista-o-prendi-in-prestito" 
+            className="text-primary hover:text-primary/80 underline transition-colors"
+          >
+            clicca qui!
+          </a>
+        </p>
       </div>
 
       {/* Language Toggle */}
