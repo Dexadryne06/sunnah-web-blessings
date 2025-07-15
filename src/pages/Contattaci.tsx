@@ -19,7 +19,7 @@ const contactInfo = [
   {
     icon: MessageCircle,
     title: "WhatsApp",
-    details: ["+39 123 456 7890"],
+    details: ["+39 349 814 0152"],
     action: "Invia messaggio"
   },
   {
