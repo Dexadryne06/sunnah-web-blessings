@@ -24,7 +24,7 @@ const featuredBooks = [
     id: 1,
     title: "Il Corano",
     author: "Traduzione italiana",
-    image: "/placeholder-book-1.jpg"
+    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png"
   },
   {
     id: 2,
@@ -193,8 +193,12 @@ export const Home = () => {
               >
                 <Card className="group hover:shadow-lg transition-all duration-300 cursor-pointer hover:scale-105 bg-transparent border-0">
                   <CardContent className="p-6">
-                    <div className="aspect-[3/4] bg-muted rounded-lg mb-4 flex items-center justify-center">
-                      <span className="text-muted-foreground">Copertina libro</span>
+                    <div className="aspect-[3/4] bg-muted rounded-lg mb-4 overflow-hidden">
+                      <img 
+                        src={book.image} 
+                        alt={book.title}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <h3 className="font-semibold text-foreground mb-2">{book.title}</h3>
                     <p className="text-sm text-muted-foreground">{book.author}</p>

@@ -12,7 +12,7 @@ const italianBooks = [
     author: "Traduzione e commento in italiano",
     description: "Il testo sacro dell'Islam con traduzione accurata e note esplicative per una comprensione profonda dei versetti.",
     category: "Qur'an",
-    image: "/placeholder-book-1.jpg",
+    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png",
     downloadUrl: "#"
   },
   {
@@ -52,7 +52,7 @@ const englishBooks = [
     author: "English Translation and Commentary",
     description: "The sacred text of Islam with accurate translation and explanatory notes for deep understanding of the verses.",
     category: "Qur'an",
-    image: "/placeholder-book-1.jpg",
+    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png",
     downloadUrl: "#"
   },
   {
@@ -234,10 +234,12 @@ export const Libri = () => {
             <Card className="group hover:shadow-lg transition-all duration-300 bg-transparent border-0">
               <CardContent className="p-6">
                 {/* Book Cover */}
-                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg mb-4 flex items-center justify-center">
-                  <span className="text-muted-foreground text-sm">
-                    {book.title}
-                  </span>
+                <div className="aspect-[3/4] bg-gradient-to-br from-primary/10 to-primary/20 rounded-lg mb-4 overflow-hidden">
+                  <img 
+                    src={book.image} 
+                    alt={book.title}
+                    className="w-full h-full object-cover"
+                  />
                 </div>
 
                 {/* Category Badge */}
