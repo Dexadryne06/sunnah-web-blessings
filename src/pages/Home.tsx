@@ -24,7 +24,7 @@ const featuredBooks = [
     id: 1,
     title: "Il Corano",
     author: "Traduzione italiana",
-    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png"
+    image: "/lovable-uploads/9cc6428e-f19a-4bb8-9610-10df6a646b7d.png"
   },
   {
     id: 2,

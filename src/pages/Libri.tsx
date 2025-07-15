@@ -12,7 +12,7 @@ const italianBooks = [
     author: "Traduzione e commento in italiano",
     description: "Il testo sacro dell'Islam con traduzione accurata e note esplicative per una comprensione profonda dei versetti.",
     category: "Qur'an",
-    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png",
+    image: "/lovable-uploads/9cc6428e-f19a-4bb8-9610-10df6a646b7d.png",
     downloadUrl: "#"
   },
   {
@@ -52,7 +52,7 @@ const englishBooks = [
     author: "English Translation and Commentary",
     description: "The sacred text of Islam with accurate translation and explanatory notes for deep understanding of the verses.",
     category: "Qur'an",
-    image: "/lovable-uploads/122e9a7c-6a69-4aff-bdce-4e3abf750fd5.png",
+    image: "/lovable-uploads/9cc6428e-f19a-4bb8-9610-10df6a646b7d.png",
     downloadUrl: "#"
   },
   {
