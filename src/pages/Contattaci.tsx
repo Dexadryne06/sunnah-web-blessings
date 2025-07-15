@@ -154,20 +154,16 @@ export const Contattaci = () => {
           >
             <Card className="bg-transparent border-0 h-[500px]">
               <CardContent className="p-6 h-full">
-                <div className="aspect-[16/10] bg-gradient-to-br from-primary/5 to-primary/10 rounded-lg flex items-center justify-center min-h-[400px]">
-                  <div className="text-center">
-                    <MapPin className="h-20 w-20 text-primary mx-auto mb-4" />
-                    <h3 className="text-2xl font-semibold text-foreground mb-2">Masjid As-Sunnah</h3>
-                    <p className="text-muted-foreground text-lg">Via Paolo VI, 30, Romano di Lombardia BG</p>
-                    <Button 
-                      className="mt-4" 
-                      variant="outline"
-                      onClick={() => window.open("https://maps.google.com/maps?hl=it&gl=it&um=1&ie=UTF-8&fb=1&sa=X&ftid=0x47814759cd685e35:0x92d57af1ef6eaec7", '_blank')}
-                    >
-                      <MapPin className="h-4 w-4 mr-2" />
-                      Apri in Google Maps
-                    </Button>
-                  </div>
+                <div className="w-full h-full rounded-lg overflow-hidden">
+                  <iframe 
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d2795.2305700811003!2d9.7465551!3d45.5255655!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x47814759cd685e35%3A0x92d57af1ef6eaec7!2z2YXYs9is2K8g2KfZhNiz2YbYqQ!5e0!3m2!1sit!2sit!4v1752592381693!5m2!1sit!2sit" 
+                    width="100%" 
+                    height="100%" 
+                    style={{border: 0}} 
+                    allowFullScreen={true}
+                    loading="lazy" 
+                    referrerPolicy="no-referrer-when-downgrade"
+                  />
                 </div>
               </CardContent>
             </Card>
