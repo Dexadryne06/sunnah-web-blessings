@@ -86,7 +86,7 @@ export const AcquistaOPrendiInPrestito = () => {
     setIsLoading(true);
 
     try {
-      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/85f3d8ef-36c7-4519-a3fe-d8c70d921400", {
+      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook-test/85f3d8ef-36c7-4519-a3fe-d8c70d921400", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
