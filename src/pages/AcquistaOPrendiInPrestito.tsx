@@ -91,7 +91,6 @@ export const AcquistaOPrendiInPrestito = () => {
         headers: {
           "Content-Type": "application/json",
         },
-        mode: "no-cors",
         body: JSON.stringify({
           name: formData.name,
           email: formData.email,
