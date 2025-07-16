@@ -268,7 +268,7 @@ export const AcquistaOPrendiInPrestito = () => {
                     <RadioGroup
                       value={formData.requestType}
                       onValueChange={(value) => handleInputChange("requestType", value)}
-                      className="mt-2"
+                      className="mt-2 flex flex-row gap-6"
                     >
                       <div className="flex items-center space-x-2">
                         <RadioGroupItem value="purchase" id="purchase" />

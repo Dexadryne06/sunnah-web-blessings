@@ -270,6 +270,8 @@ export const Lezioni = () => {
                     id="childAge"
                     name="childAge"
                     type="number"
+                    min="1"
+                    max="18"
                     value={childFormData.childAge}
                     onChange={handleChildInputChange}
                     required
