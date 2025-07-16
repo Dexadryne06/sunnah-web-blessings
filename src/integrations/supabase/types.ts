@@ -14,7 +14,126 @@ export type Database = {
   }
   public: {
     Tables: {
-      [_ in never]: never
+      book_requests: {
+        Row: {
+          address: string | null
+          created_at: string
+          email: string
+          id: string
+          name: string
+          notes: string | null
+          phone: string | null
+          request_type: string
+          selected_book: string
+          updated_at: string
+        }
+        Insert: {
+          address?: string | null
+          created_at?: string
+          email: string
+          id?: string
+          name: string
+          notes?: string | null
+          phone?: string | null
+          request_type: string
+          selected_book: string
+          updated_at?: string
+        }
+        Update: {
+          address?: string | null
+          created_at?: string
+          email?: string
+          id?: string
+          name?: string
+          notes?: string | null
+          phone?: string | null
+          request_type?: string
+          selected_book?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      contacts: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          message: string
+          name: string
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          message: string
+          name: string
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string
+          name?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      donation_interactions: {
+        Row: {
+          created_at: string
+          details: Json | null
+          id: string
+          interaction_type: string
+        }
+        Insert: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          interaction_type: string
+        }
+        Update: {
+          created_at?: string
+          details?: Json | null
+          id?: string
+          interaction_type?: string
+        }
+        Relationships: []
+      }
+      lesson_registrations: {
+        Row: {
+          child_age: number
+          child_name: string
+          created_at: string
+          id: string
+          parent_email: string
+          parent_name: string
+          phone: string | null
+          updated_at: string
+        }
+        Insert: {
+          child_age: number
+          child_name: string
+          created_at?: string
+          id?: string
+          parent_email: string
+          parent_name: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Update: {
+          child_age?: number
+          child_name?: string
+          created_at?: string
+          id?: string
+          parent_email?: string
+          parent_name?: string
+          phone?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
     }
     Views: {
       [_ in never]: never

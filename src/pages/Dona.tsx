@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import { Copy, Mail, Heart, Building, BookOpen, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
+import { supabase } from "@/integrations/supabase/client";
 import sadaqaTreeImg from "@/assets/sadaqa-tree.jpg";
 import mosqueHeroImg from "@/assets/mosque-hero.jpg";
 import { useState } from "react";
@@ -36,23 +37,51 @@ const impactAreas = [
   }
 ];
 
-const copyToClipboard = (text: string, label: string) => {
+const copyToClipboard = async (text: string, label: string) => {
   navigator.clipboard.writeText(text);
   toast({
     title: "Copiato!",
     description: `${label} copiato negli appunti`,
   });
+
+  // Traccia l'interazione su Supabase
+  try {
+    await supabase
+      .from('donation_interactions')
+      .insert([
+        {
+          interaction_type: 'copy_clipboard',
+          details: { label, text }
+        }
+      ]);
+  } catch (error) {
+    console.error('Errore nel salvare interazione:', error);
+  }
 };
 
 export const Dona = () => {
   const [isLiked, setIsLiked] = useState(false);
 
-  const handleHeartClick = () => {
+  const handleHeartClick = async () => {
     setIsLiked(!isLiked);
     toast({
       title: isLiked ? "Rimosso dai preferiti" : "Aggiunto ai preferiti",
       description: isLiked ? "Hai rimosso questa causa dai tuoi preferiti" : "Grazie per aver mostrato apprezzamento per questa nobile causa",
     });
+
+    // Traccia l'interazione su Supabase
+    try {
+      await supabase
+        .from('donation_interactions')
+        .insert([
+          {
+            interaction_type: isLiked ? 'unlike' : 'like',
+            details: { action: isLiked ? 'removed_from_favorites' : 'added_to_favorites' }
+          }
+        ]);
+    } catch (error) {
+      console.error('Errore nel salvare interazione:', error);
+    }
   };
 
   return (

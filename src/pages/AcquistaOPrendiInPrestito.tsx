@@ -9,6 +9,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { ShoppingCart, BookOpen, Send } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
+import { supabase } from "@/integrations/supabase/client";
 
 // Libri disponibili (mock data)
 const availableBooks = [
@@ -86,6 +87,26 @@ export const AcquistaOPrendiInPrestito = () => {
     setIsLoading(true);
 
     try {
+      // Salva su Supabase
+      const { error: supabaseError } = await supabase
+        .from('book_requests')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            phone: formData.phone,
+            address: formData.address,
+            request_type: formData.requestType,
+            selected_book: formData.selectedBook,
+            notes: formData.notes
+          }
+        ]);
+
+      if (supabaseError) {
+        console.error('Errore Supabase:', supabaseError);
+      }
+
+      // Invia via webhook
       const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook-test/85f3d8ef-36c7-4519-a3fe-d8c70d921400", {
         method: "POST",
         headers: {

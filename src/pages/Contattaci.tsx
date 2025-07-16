@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { MapPin, Mail, Clock, Send, MessageCircle } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
+import { supabase } from "@/integrations/supabase/client";
 
 const contactInfo = [
   {
@@ -57,6 +58,22 @@ export const Contattaci = () => {
     setIsSubmitting(true);
 
     try {
+      // Salva su Supabase
+      const { error: supabaseError } = await supabase
+        .from('contacts')
+        .insert([
+          {
+            name: formData.name,
+            email: formData.email,
+            message: formData.message
+          }
+        ]);
+
+      if (supabaseError) {
+        console.error('Errore Supabase:', supabaseError);
+      }
+
+      // Invia via webhook
       const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/a966bf4f-96d0-4c94-bbde-9d09719d2093", {
         method: "POST",
         headers: {

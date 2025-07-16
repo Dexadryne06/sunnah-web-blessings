@@ -7,6 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Calendar, Clock, MapPin, User, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
+import { supabase } from "@/integrations/supabase/client";
 
 // Mock data for lessons
 const weeklyLessons = [
@@ -151,6 +152,24 @@ export const Lezioni = () => {
     setIsSubmittingChild(true);
 
     try {
+      // Salva su Supabase
+      const { error: supabaseError } = await supabase
+        .from('lesson_registrations')
+        .insert([
+          {
+            parent_name: childFormData.parentName,
+            parent_email: childFormData.parentEmail,
+            child_name: childFormData.childName,
+            child_age: parseInt(childFormData.childAge),
+            phone: childFormData.phone
+          }
+        ]);
+
+      if (supabaseError) {
+        console.error('Errore Supabase:', supabaseError);
+      }
+
+      // Invia via webhook
       const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/0b973509-94db-4994-9f4c-1fadbcaea442", {
         method: "POST",
         headers: {
