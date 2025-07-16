@@ -256,9 +256,15 @@ export const Dona = () => {
                 thickness={3.5}
                 className="inline-block"
               >
-                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground" size="lg">
-                  <Mail className="h-4 w-4" />
-                  Invia Ricevuta via Email
+                <Button 
+                  className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground" 
+                  size="lg"
+                  asChild
+                >
+                  <a href="mailto:admin@yusuf-ai.xyz?subject=Ricevuta%20donazione">
+                    <Mail className="h-4 w-4" />
+                    Invia Ricevuta via Email
+                  </a>
                 </Button>
               </StarBorder>
               <p className="text-sm text-muted-foreground mt-2">
