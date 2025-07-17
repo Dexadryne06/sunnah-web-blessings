@@ -97,7 +97,7 @@ export const AcquistaOPrendiInPrestito = () => {
             phone: formData.phone,
             address: formData.address,
             request_type: formData.requestType,
-            selected_book: formData.selectedBook,
+            selected_book: availableBooks.find(book => book.id.toString() === formData.selectedBook)?.title || formData.selectedBook,
             notes: formData.notes
           }
         ]);
@@ -118,7 +118,7 @@ export const AcquistaOPrendiInPrestito = () => {
           phone: formData.phone,
           address: formData.address,
           requestType: formData.requestType,
-          selectedBook: formData.selectedBook,
+          selectedBook: availableBooks.find(book => book.id.toString() === formData.selectedBook)?.title || formData.selectedBook,
           notes: formData.notes,
           timestamp: new Date().toISOString(),
           source: "website_book_request"
