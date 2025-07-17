@@ -7,7 +7,7 @@ export const Footer = ({ className = "" }: { className?: string }) => {
         <div className="flex items-center justify-center gap-6 text-sm text-muted-foreground flex-wrap">
           <div className="flex items-center gap-2 text-foreground whitespace-nowrap">
             <span className="font-semibold">Masjid As-Sunnah</span>
-            <Heart className="h-4 w-4 text-primary" />
+            {/* <Heart className="h-4 w-4 text-primary" /> */}
           </div>
           <span className="whitespace-nowrap">© {new Date().getFullYear()} Masjid As-Sunnah. Tutti i diritti riservati.</span>
           <span className="whitespace-nowrap">Un luogo di adorazione, apprendimento e comunità</span>
