@@ -185,7 +185,10 @@ export const Home = () => {
                 thickness={3.5}
                 className="inline-block"
               >
-                <Button className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground">
+                <Button 
+                  className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground"
+                  onClick={() => window.open('https://orari-preghiera-masjid-as-sunnah.s3.eu-north-1.amazonaws.com/Orari_Preghiera.pdf', '_blank')}
+                >
                   <Download className="h-4 w-4" />
                   Scarica PDF del mese
                 </Button>
