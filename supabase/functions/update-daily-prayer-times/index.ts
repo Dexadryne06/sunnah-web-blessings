@@ -1,0 +1,63 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
+import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
+import { corsHeaders } from '../_shared/cors.ts'
+
+const supabaseUrl = "https://pspbnpkwnudwktxqmvos.supabase.co"
+const supabaseAnonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBzcGJucGt3bnVkd2t0eHFtdm9zIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTI2NTUwNjMsImV4cCI6MjA2ODIzMTA2M30.gXKliZ0oN_0doArVVnp31PK1qTZvGRRVAH5sdZWlJ0M"
+const supabase = createClient(supabaseUrl, supabaseAnonKey)
+
+serve(async (req) => {
+  if (req.method === 'OPTIONS') {
+    return new Response('ok', { headers: corsHeaders })
+  }
+
+  try {
+    const today = new Date().toISOString().split('T')[0]
+    
+    // Get today's prayer times from the prayer_times table
+    const { data: prayerTimes, error: selectError } = await supabase
+      .from('prayer_times')
+      .select('*')
+      .eq('date', today)
+      .single()
+
+    if (selectError) {
+      console.error('Error fetching prayer times:', selectError)
+      throw selectError
+    }
+
+    if (!prayerTimes) {
+      throw new Error('No prayer times found for today')
+    }
+
+    // Update or insert into current_prayer_times
+    const { error: upsertError } = await supabase
+      .from('current_prayer_times')
+      .upsert({
+        date: today,
+        fajr: prayerTimes.fajr,
+        sunrise: prayerTimes.sunrise,
+        dhuhr: prayerTimes.dhuhr,
+        asr: prayerTimes.asr,
+        maghrib: prayerTimes.maghrib,
+        isha: prayerTimes.isha
+      })
+
+    if (upsertError) {
+      console.error('Error upserting current prayer times:', upsertError)
+      throw upsertError
+    }
+
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 200,
+    })
+
+  } catch (error) {
+    console.error('Error in update-daily-prayer-times:', error)
+    return new Response(JSON.stringify({ error: error.message }), {
+      headers: { ...corsHeaders, 'Content-Type': 'application/json' },
+      status: 500,
+    })
+  }
+})

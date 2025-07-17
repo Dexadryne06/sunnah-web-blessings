@@ -1,1 +1,4 @@
 project_id = "pspbnpkwnudwktxqmvos"
+
+[functions.update-daily-prayer-times]
+verify_jwt = false

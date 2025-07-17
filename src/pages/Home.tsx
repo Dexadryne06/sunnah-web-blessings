@@ -9,14 +9,7 @@ import quranStudyImg from "@/assets/quran-study.jpg";
 import fridayPrayerImg from "@/assets/friday-prayer.jpg";
 import childrenEducationImg from "@/assets/children-education.jpg";
 
-// Mock data for prayer times
-const prayerTimes = [
-  { prayer: "Fajr", time: "05:30" },
-  { prayer: "Dhuhr", time: "12:15" },
-  { prayer: "Asr", time: "15:45" },
-  { prayer: "Maghrib", time: "18:20" },
-  { prayer: "Isha", time: "19:45" },
-];
+import { usePrayerTimes } from "@/hooks/use-prayer-times";
 
 // Mock data for featured books
 const featuredBooks = [
@@ -63,6 +56,8 @@ const featuredLessons = [
 ];
 
 export const Home = () => {
+  const { prayerTimes, loading, error } = usePrayerTimes();
+
   return (
     <motion.div 
       className="space-y-16 pb-16"
