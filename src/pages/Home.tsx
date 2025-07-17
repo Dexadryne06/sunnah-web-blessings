@@ -58,6 +58,42 @@ const featuredLessons = [
 export const Home = () => {
   const { prayerTimes, loading, error } = usePrayerTimes();
 
+  // Show loading state
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="space-y-4 text-center">
+          <div className="animate-spin w-8 h-8 border-4 border-primary border-t-transparent rounded-full mx-auto"></div>
+          <p className="text-muted-foreground">Caricamento orari di preghiera...</p>
+        </div>
+      </div>
+    );
+  }
+
+  // Show error state
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="space-y-4 text-center">
+          <p className="text-destructive">Errore nel caricamento degli orari di preghiera</p>
+          <Button onClick={() => window.location.reload()} variant="outline">Riprova</Button>
+        </div>
+      </div>
+    );
+  }
+
+  // If no prayer times found, show default message
+  if (!prayerTimes || prayerTimes.length === 0) {
+    return (
+      <div className="flex items-center justify-center min-h-screen">
+        <div className="space-y-4 text-center">
+          <p className="text-muted-foreground">Nessun orario di preghiera disponibile</p>
+          <Button onClick={() => window.location.reload()} variant="outline">Riprova</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <motion.div 
       className="space-y-16 pb-16"
