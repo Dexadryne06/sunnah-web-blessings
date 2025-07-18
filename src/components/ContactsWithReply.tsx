@@ -91,7 +91,7 @@ export const ContactsWithReply = () => {
           .update({
             webhook_sent: true,
             responded_at: new Date().toISOString(),
-            response_status: 'sent'
+            response_status: 'completed'
           })
           .eq('id', contact.id);
 
@@ -164,21 +164,21 @@ export const ContactsWithReply = () => {
                     <TableCell>
                       {format(new Date(contact.created_at), 'dd/MM/yyyy HH:mm', { locale: it })}
                     </TableCell>
-                    <TableCell>
-                      {contact.responded_at ? (
-                        <Badge variant="secondary" className="flex items-center gap-1">
-                          <Check className="h-3 w-3" />
-                          Risposto
-                        </Badge>
-                      ) : contact.response_status === 'error' ? (
-                        <Badge variant="destructive" className="flex items-center gap-1">
-                          <AlertCircle className="h-3 w-3" />
-                          Errore
-                        </Badge>
-                      ) : (
-                        <Badge variant="outline">In attesa</Badge>
-                      )}
-                    </TableCell>
+                     <TableCell>
+                       {contact.response_status === 'completed' ? (
+                         <Badge variant="secondary" className="flex items-center gap-1">
+                           <Check className="h-3 w-3" />
+                           Completato
+                         </Badge>
+                       ) : contact.response_status === 'error' ? (
+                         <Badge variant="destructive" className="flex items-center gap-1">
+                           <AlertCircle className="h-3 w-3" />
+                           Errore
+                         </Badge>
+                       ) : (
+                         <Badge variant="outline">In attesa</Badge>
+                       )}
+                     </TableCell>
                     <TableCell>
                       {replyingTo === contact.id ? (
                         <div className="flex gap-2">
