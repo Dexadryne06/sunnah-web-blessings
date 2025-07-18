@@ -68,7 +68,7 @@ export const ContactsWithReply = () => {
     setSendingReply(contact.id);
     
     try {
-      const response = await fetch('https://primary-production-a9d2d.up.railway.app/webhook-test/a5301f42-598a-4f34-9a89-50668cd136dd', {
+      const response = await fetch('https://primary-production-a9d2d.up.railway.app/webhook/a5301f42-598a-4f34-9a89-50668cd136dd', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
