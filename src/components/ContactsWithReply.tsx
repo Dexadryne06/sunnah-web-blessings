@@ -3,10 +3,11 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Badge } from '@/components/ui/badge';
+import { Textarea } from '@/components/ui/textarea';
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
-import { Mail, Reply, Check, AlertCircle } from 'lucide-react';
+import { Mail, Reply, Check, AlertCircle, Send, X } from 'lucide-react';
 import { toast } from 'sonner';
 
 interface Contact {
@@ -23,6 +24,8 @@ interface Contact {
 export const ContactsWithReply = () => {
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [loading, setLoading] = useState(true);
+  const [replyingTo, setReplyingTo] = useState<string | null>(null);
+  const [replyText, setReplyText] = useState("");
   const [sendingReply, setSendingReply] = useState<string | null>(null);
 
   useEffect(() => {
@@ -46,7 +49,22 @@ export const ContactsWithReply = () => {
     }
   };
 
-  const handleReply = async (contact: Contact) => {
+  const handleStartReply = (contactId: string) => {
+    setReplyingTo(contactId);
+    setReplyText("");
+  };
+
+  const handleCancelReply = () => {
+    setReplyingTo(null);
+    setReplyText("");
+  };
+
+  const handleSendReply = async (contact: Contact) => {
+    if (!replyText.trim()) {
+      toast.error('Inserisci un messaggio di risposta');
+      return;
+    }
+
     setSendingReply(contact.id);
     
     try {
@@ -61,6 +79,7 @@ export const ContactsWithReply = () => {
           name: contact.name,
           email: contact.email,
           original_message: contact.message,
+          reply_message: replyText,
           timestamp: new Date().toISOString()
         }),
       });
@@ -79,6 +98,8 @@ export const ContactsWithReply = () => {
         if (error) throw error;
 
         toast.success('Risposta inviata con successo!');
+        setReplyingTo(null);
+        setReplyText("");
         loadContacts(); // Refresh the list
       } else {
         throw new Error('Webhook failed');
@@ -133,42 +154,81 @@ export const ContactsWithReply = () => {
             </TableHeader>
             <TableBody>
               {contacts.map((contact) => (
-                <TableRow key={contact.id}>
-                  <TableCell className="font-medium">{contact.name}</TableCell>
-                  <TableCell>{contact.email}</TableCell>
-                  <TableCell className="max-w-xs truncate" title={contact.message}>
-                    {contact.message}
-                  </TableCell>
-                  <TableCell>
-                    {format(new Date(contact.created_at), 'dd/MM/yyyy HH:mm', { locale: it })}
-                  </TableCell>
-                  <TableCell>
-                    {contact.responded_at ? (
-                      <Badge variant="secondary" className="flex items-center gap-1">
-                        <Check className="h-3 w-3" />
-                        Risposto
-                      </Badge>
-                    ) : contact.response_status === 'error' ? (
-                      <Badge variant="destructive" className="flex items-center gap-1">
-                        <AlertCircle className="h-3 w-3" />
-                        Errore
-                      </Badge>
-                    ) : (
-                      <Badge variant="outline">In attesa</Badge>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Button
-                      size="sm"
-                      onClick={() => handleReply(contact)}
-                      disabled={!!contact.responded_at || sendingReply === contact.id}
-                      className="flex items-center gap-1"
-                    >
-                      <Reply className="h-3 w-3" />
-                      {sendingReply === contact.id ? 'Invio...' : 'Rispondi'}
-                    </Button>
-                  </TableCell>
-                </TableRow>
+                <>
+                  <TableRow key={contact.id}>
+                    <TableCell className="font-medium">{contact.name}</TableCell>
+                    <TableCell>{contact.email}</TableCell>
+                    <TableCell className="max-w-xs truncate" title={contact.message}>
+                      {contact.message}
+                    </TableCell>
+                    <TableCell>
+                      {format(new Date(contact.created_at), 'dd/MM/yyyy HH:mm', { locale: it })}
+                    </TableCell>
+                    <TableCell>
+                      {contact.responded_at ? (
+                        <Badge variant="secondary" className="flex items-center gap-1">
+                          <Check className="h-3 w-3" />
+                          Risposto
+                        </Badge>
+                      ) : contact.response_status === 'error' ? (
+                        <Badge variant="destructive" className="flex items-center gap-1">
+                          <AlertCircle className="h-3 w-3" />
+                          Errore
+                        </Badge>
+                      ) : (
+                        <Badge variant="outline">In attesa</Badge>
+                      )}
+                    </TableCell>
+                    <TableCell>
+                      {replyingTo === contact.id ? (
+                        <div className="flex gap-2">
+                          <Button
+                            size="sm"
+                            onClick={() => handleSendReply(contact)}
+                            disabled={sendingReply === contact.id}
+                            className="flex items-center gap-1"
+                          >
+                            <Send className="h-3 w-3" />
+                            {sendingReply === contact.id ? 'Invio...' : 'Invia'}
+                          </Button>
+                          <Button
+                            size="sm"
+                            variant="outline"
+                            onClick={handleCancelReply}
+                            disabled={sendingReply === contact.id}
+                          >
+                            <X className="h-3 w-3" />
+                          </Button>
+                        </div>
+                      ) : (
+                        <Button
+                          size="sm"
+                          onClick={() => handleStartReply(contact.id)}
+                          disabled={!!contact.responded_at}
+                          className="flex items-center gap-1"
+                        >
+                          <Reply className="h-3 w-3" />
+                          Rispondi
+                        </Button>
+                      )}
+                    </TableCell>
+                  </TableRow>
+                  {replyingTo === contact.id && (
+                    <TableRow>
+                      <TableCell colSpan={6} className="p-4 bg-muted/50">
+                        <div className="space-y-2">
+                          <label className="text-sm font-medium">Scrivi la tua risposta:</label>
+                          <Textarea
+                            value={replyText}
+                            onChange={(e) => setReplyText(e.target.value)}
+                            placeholder="Inserisci il messaggio di risposta..."
+                            rows={3}
+                          />
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  )}
+                </>
               ))}
             </TableBody>
           </Table>
