@@ -61,6 +61,7 @@ export default function Dashboard() {
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
   const [isAuthenticated, setIsAuthenticated] = useState(false);
 
+  // Check authentication on mount
   useEffect(() => {
     const checkAuth = () => {
       const authStatus = localStorage.getItem('admin-authenticated');
@@ -69,14 +70,17 @@ export default function Dashboard() {
     checkAuth();
   }, []);
 
+  // Load dashboard data only when authenticated
+  useEffect(() => {
+    if (isAuthenticated) {
+      loadDashboardData();
+    }
+  }, [isAuthenticated]);
+
   const handleLogout = () => {
     localStorage.removeItem('admin-authenticated');
     setIsAuthenticated(false);
   };
-
-  if (!isAuthenticated) {
-    return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
-  }
 
   const updatePrayerTimes = async () => {
     setUpdatingPrayerTimes(true);
@@ -92,10 +96,6 @@ export default function Dashboard() {
       setUpdatingPrayerTimes(false);
     }
   };
-
-  useEffect(() => {
-    loadDashboardData();
-  }, []);
 
   const loadDashboardData = async () => {
     try {
@@ -256,6 +256,11 @@ export default function Dashboard() {
       userSessions: userSessions || []
     };
   };
+
+  // Show login screen if not authenticated
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   if (loading) {
     return (
