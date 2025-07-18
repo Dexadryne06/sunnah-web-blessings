@@ -1,3 +1,4 @@
+
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts"
 import { createClient } from 'https://esm.sh/@supabase/supabase-js@2'
 
@@ -16,10 +17,14 @@ serve(async (req) => {
   }
 
   try {
+    console.log('Starting prayer times update process...')
+    
     // Use Rome timezone for accurate date calculation
     const today = new Date().toLocaleDateString('en-CA', { 
       timeZone: 'Europe/Rome' 
     })
+    
+    console.log(`Today's date (Rome timezone): ${today}`)
     
     // Get today's prayer times from the prayer_times table
     const { data: prayerTimes, error: selectError } = await supabase
@@ -34,11 +39,29 @@ serve(async (req) => {
     }
 
     if (!prayerTimes) {
-      throw new Error('No prayer times found for today')
+      console.error(`No prayer times found for date: ${today}`)
+      throw new Error(`No prayer times found for today (${today})`)
+    }
+
+    console.log('Found prayer times:', prayerTimes)
+
+    // Check if current_prayer_times already has today's data
+    const { data: existingCurrent, error: checkError } = await supabase
+      .from('current_prayer_times')
+      .select('*')
+      .eq('date', today)
+      .maybeSingle()
+
+    if (checkError) {
+      console.error('Error checking existing current prayer times:', checkError)
+    } else if (existingCurrent) {
+      console.log('Current prayer times already exist for today, updating...')
+    } else {
+      console.log('No current prayer times exist for today, creating new...')
     }
 
     // Update or insert into current_prayer_times
-    const { error: upsertError } = await supabase
+    const { data: upsertData, error: upsertError } = await supabase
       .from('current_prayer_times')
       .upsert({
         date: today,
@@ -48,16 +71,23 @@ serve(async (req) => {
         asr: prayerTimes.asr,
         maghrib: prayerTimes.maghrib,
         isha: prayerTimes.isha
+      }, {
+        onConflict: 'date'
       })
+      .select()
 
     if (upsertError) {
       console.error('Error upserting current prayer times:', upsertError)
       throw upsertError
     }
 
+    console.log('Successfully updated current prayer times:', upsertData)
+
     return new Response(JSON.stringify({ 
       success: true, 
       date: today,
+      prayerTimes: prayerTimes,
+      message: `Prayer times updated successfully for ${today}`,
       timestamp: new Date().toISOString()
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
@@ -69,7 +99,8 @@ serve(async (req) => {
     return new Response(JSON.stringify({ 
       error: error.message,
       today: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }),
-      timestamp: new Date().toISOString()
+      timestamp: new Date().toISOString(),
+      details: error
     }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
