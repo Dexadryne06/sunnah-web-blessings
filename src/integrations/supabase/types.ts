@@ -14,6 +14,75 @@ export type Database = {
   }
   public: {
     Tables: {
+      admin_users: {
+        Row: {
+          created_at: string
+          email: string
+          id: string
+          role: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          email: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          email?: string
+          id?: string
+          role?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
+      analytics_events: {
+        Row: {
+          created_at: string
+          element_id: string | null
+          element_text: string | null
+          event_name: string
+          event_type: string
+          id: string
+          ip_address: string | null
+          metadata: Json | null
+          page_url: string | null
+          user_agent: string | null
+          user_session: string | null
+        }
+        Insert: {
+          created_at?: string
+          element_id?: string | null
+          element_text?: string | null
+          event_name: string
+          event_type: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          page_url?: string | null
+          user_agent?: string | null
+          user_session?: string | null
+        }
+        Update: {
+          created_at?: string
+          element_id?: string | null
+          element_text?: string | null
+          event_name?: string
+          event_type?: string
+          id?: string
+          ip_address?: string | null
+          metadata?: Json | null
+          page_url?: string | null
+          user_agent?: string | null
+          user_session?: string | null
+        }
+        Relationships: []
+      }
       book_requests: {
         Row: {
           address: string | null
@@ -209,6 +278,39 @@ export type Database = {
           maghrib?: string
           sunrise?: string
           updated_at?: string
+        }
+        Relationships: []
+      }
+      user_sessions: {
+        Row: {
+          created_at: string
+          duration_seconds: number | null
+          end_time: string | null
+          id: string
+          pages_visited: number | null
+          session_id: string
+          start_time: string
+          total_clicks: number | null
+        }
+        Insert: {
+          created_at?: string
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          pages_visited?: number | null
+          session_id: string
+          start_time?: string
+          total_clicks?: number | null
+        }
+        Update: {
+          created_at?: string
+          duration_seconds?: number | null
+          end_time?: string | null
+          id?: string
+          pages_visited?: number | null
+          session_id?: string
+          start_time?: string
+          total_clicks?: number | null
         }
         Relationships: []
       }

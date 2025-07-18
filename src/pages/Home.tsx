@@ -10,6 +10,7 @@ import fridayPrayerImg from "@/assets/friday-prayer.jpg";
 import childrenEducationImg from "@/assets/children-education.jpg";
 
 import { usePrayerTimes } from "@/hooks/use-prayer-times";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 // Mock data for featured books
 const featuredBooks = [
@@ -57,6 +58,12 @@ const featuredLessons = [
 
 export const Home = () => {
   const { prayerTimes, loading, error } = usePrayerTimes();
+  const { trackDownload } = useAnalytics();
+
+  const handlePdfDownload = () => {
+    trackDownload('Orari_Preghiera.pdf', 'https://orari-preghiera-masjid-as-sunnah.s3.eu-north-1.amazonaws.com/Orari_Preghiera.pdf');
+    window.open('https://orari-preghiera-masjid-as-sunnah.s3.eu-north-1.amazonaws.com/Orari_Preghiera.pdf', '_blank');
+  };
 
   // Show loading state
   if (loading) {
@@ -187,7 +194,8 @@ export const Home = () => {
               >
                 <Button 
                   className="gap-2 bg-transparent border-0 hover:bg-transparent text-foreground hover:text-foreground"
-                  onClick={() => window.open('https://orari-preghiera-masjid-as-sunnah.s3.eu-north-1.amazonaws.com/Orari_Preghiera.pdf', '_blank')}
+                  onClick={handlePdfDownload}
+                  data-track="pdf-download"
                 >
                   <Download className="h-4 w-4" />
                   Scarica PDF del mese

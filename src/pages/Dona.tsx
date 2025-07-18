@@ -4,6 +4,7 @@ import { Copy, Mail, Heart, Building, BookOpen, Users } from "lucide-react";
 import { toast } from "@/hooks/use-toast";
 import StarBorder from "@/components/StarBorder";
 import { supabase } from "@/integrations/supabase/client";
+import { useAnalytics } from "@/hooks/use-analytics";
 import sadaqaTreeImg from "@/assets/sadaqa-tree.jpg";
 import mosqueHeroImg from "@/assets/mosque-hero.jpg";
 import { useState } from "react";
@@ -61,16 +62,20 @@ const copyToClipboard = async (text: string, label: string) => {
 
 export const Dona = () => {
   const [isLiked, setIsLiked] = useState(false);
+  const { trackInteraction } = useAnalytics();
 
   const handleHeartClick = async () => {
-    setIsLiked(!isLiked);
+    const newLikedState = !isLiked;
+    setIsLiked(newLikedState);
+    
     toast({
       title: isLiked ? "Rimosso dai preferiti" : "Aggiunto ai preferiti",
       description: isLiked ? "Hai rimosso questa causa dai tuoi preferiti" : "Grazie per aver mostrato apprezzamento per questa nobile causa",
     });
 
-    // Traccia l'interazione su Supabase
+    // Traccia con entrambi i sistemi
     try {
+      // Sistema esistente
       await supabase
         .from('donation_interactions')
         .insert([
@@ -79,6 +84,14 @@ export const Dona = () => {
             details: { action: isLiked ? 'removed_from_favorites' : 'added_to_favorites' }
           }
         ]);
+
+      // Nuovo sistema analytics
+      trackInteraction(isLiked ? 'unlike' : 'like', {
+        page: '/dona',
+        element: 'heart_icon',
+        action: isLiked ? 'removed_from_favorites' : 'added_to_favorites',
+        specialElement: 'donation_like'
+      });
     } catch (error) {
       console.error('Errore nel salvare interazione:', error);
     }

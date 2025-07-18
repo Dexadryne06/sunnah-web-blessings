@@ -1,6 +1,17 @@
 import { Heart } from "lucide-react";
+import { useAnalytics } from "@/hooks/use-analytics";
 
 export const Footer = ({ className = "" }: { className?: string }) => {
+  const { trackClick } = useAnalytics();
+
+  const handleYusufClick = () => {
+    trackClick('Yusuf', 'yusuf-credit-link', {
+      specialElement: 'yusuf_credit',
+      location: 'footer',
+      action: 'email_click'
+    });
+  };
+
   return (
     <footer className={`mt-8 ${className}`}>
       <div className="container mx-auto px-4 py-4">
@@ -24,6 +35,8 @@ export const Footer = ({ className = "" }: { className?: string }) => {
               <a 
                 href="mailto:admin@yusuf-ai.xyz" 
                 className="underline hover:text-primary transition-colors"
+                onClick={handleYusufClick}
+                data-track="yusuf-credit"
               >
                 Yusuf
               </a>

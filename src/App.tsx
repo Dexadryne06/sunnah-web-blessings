@@ -11,9 +11,11 @@ import { AcquistaOPrendiInPrestito } from "./pages/AcquistaOPrendiInPrestito";
 import { Lezioni } from "./pages/Lezioni";
 import { Dona } from "./pages/Dona";
 import { Contattaci } from "./pages/Contattaci";
+import Dashboard from "./pages/Dashboard";
 import { CookiePolicy } from "./pages/CookiePolicy";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
+import { AnalyticsTracker } from "./components/AnalyticsTracker";
 
 const queryClient = new QueryClient();
 
@@ -23,6 +25,7 @@ const App = () => (
       <Toaster />
       <Sonner />
       <BrowserRouter>
+        <AnalyticsTracker />
         <Routes>
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
@@ -32,6 +35,7 @@ const App = () => (
             <Route path="lezioni" element={<Lezioni />} />
             <Route path="dona" element={<Dona />} />
             <Route path="contattaci" element={<Contattaci />} />
+            <Route path="dashboard" element={<Dashboard />} />
             <Route path="cookie-policy" element={<CookiePolicy />} />
             <Route path="privacy-policy" element={<PrivacyPolicy />} />
           </Route>
