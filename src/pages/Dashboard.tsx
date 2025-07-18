@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
+import { toast } from "sonner";
 import { 
   BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer,
   PieChart, Pie, Cell, LineChart, Line, Area, AreaChart
@@ -52,6 +53,22 @@ export default function Dashboard() {
   const [tables, setTables] = useState<DatabaseTables | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
+  const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
+
+  const updatePrayerTimes = async () => {
+    setUpdatingPrayerTimes(true);
+    try {
+      const { data, error } = await supabase.functions.invoke('update-daily-prayer-times');
+      if (error) throw error;
+      toast.success("Orari di preghiera aggiornati con successo!");
+      loadDashboardData(); // Refresh data
+    } catch (error) {
+      console.error('Error updating prayer times:', error);
+      toast.error("Errore nell'aggiornamento degli orari di preghiera");
+    } finally {
+      setUpdatingPrayerTimes(false);
+    }
+  };
 
   useEffect(() => {
     loadDashboardData();
@@ -233,10 +250,19 @@ export default function Dashboard() {
     <div className="container mx-auto py-8 space-y-8">
       <div className="flex items-center justify-between">
         <h1 className="text-3xl font-bold">Dashboard Admin</h1>
-        <Button onClick={loadDashboardData} variant="outline">
-          <TrendingUp className="h-4 w-4 mr-2" />
-          Aggiorna Dati
-        </Button>
+        <div className="flex gap-2">
+          <Button 
+            onClick={updatePrayerTimes} 
+            disabled={updatingPrayerTimes}
+            className="bg-primary hover:bg-primary/90"
+          >
+            {updatingPrayerTimes ? "Aggiornando..." : "Aggiorna Orari Preghiera"}
+          </Button>
+          <Button onClick={loadDashboardData} variant="outline">
+            <TrendingUp className="h-4 w-4 mr-2" />
+            Aggiorna Dati
+          </Button>
+        </div>
       </div>
 
       {/* Overview Stats */}
