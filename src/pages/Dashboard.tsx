@@ -23,8 +23,12 @@ import {
   BookOpen,
   GraduationCap,
   Eye,
-  TrendingUp
+  TrendingUp,
+  LogOut
 } from 'lucide-react';
+import { AdminLogin } from '@/components/AdminLogin';
+import { ContactsWithReply } from '@/components/ContactsWithReply';
+import { FunctionLogs } from '@/components/FunctionLogs';
 
 interface AnalyticsData {
   totalEvents: number;
@@ -35,6 +39,7 @@ interface AnalyticsData {
   topClickedElements: Array<{ element: string; count: number }>;
   pageViews: Array<{ page: string; count: number }>;
   dailyActivity: Array<{ date: string; events: number; sessions: number }>;
+  downloadEvents: Array<{ id: string; created_at: string; page_url: string; download_details: any; user_agent: string; ip_address: string }>;
 }
 
 interface DatabaseTables {
@@ -54,6 +59,24 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
+  const [isAuthenticated, setIsAuthenticated] = useState(false);
+
+  useEffect(() => {
+    const checkAuth = () => {
+      const authStatus = localStorage.getItem('admin-authenticated');
+      setIsAuthenticated(authStatus === 'true');
+    };
+    checkAuth();
+  }, []);
+
+  const handleLogout = () => {
+    localStorage.removeItem('admin-authenticated');
+    setIsAuthenticated(false);
+  };
+
+  if (!isAuthenticated) {
+    return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
+  }
 
   const updatePrayerTimes = async () => {
     setUpdatingPrayerTimes(true);
@@ -104,10 +127,10 @@ export default function Dashboard() {
       .from('user_sessions')
       .select('*', { count: 'exact', head: true });
 
-    // Get downloads
-    const { count: totalDownloads } = await supabase
+    // Get downloads with details
+    const { data: downloadEvents, count: totalDownloads } = await supabase
       .from('analytics_events')
-      .select('*', { count: 'exact', head: true })
+      .select('*', { count: 'exact' })
       .eq('event_type', 'download');
 
     // Get likes from donation interactions
@@ -202,7 +225,8 @@ export default function Dashboard() {
       avgSessionDuration,
       topClickedElements,
       pageViews,
-      dailyActivity
+      dailyActivity,
+      downloadEvents: downloadEvents || []
     };
   };
 
@@ -262,6 +286,10 @@ export default function Dashboard() {
             <TrendingUp className="h-4 w-4 mr-2" />
             Aggiorna Dati
           </Button>
+          <Button onClick={handleLogout} variant="destructive">
+            <LogOut className="h-4 w-4 mr-2" />
+            Logout
+          </Button>
         </div>
       </div>
 
@@ -309,11 +337,14 @@ export default function Dashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-4">
+        <TabsList className="grid w-full grid-cols-7">
           <TabsTrigger value="overview">Analytics</TabsTrigger>
           <TabsTrigger value="tables">Database</TabsTrigger>
           <TabsTrigger value="interactions">Interazioni</TabsTrigger>
           <TabsTrigger value="sessions">Sessioni</TabsTrigger>
+          <TabsTrigger value="contacts">Messaggi</TabsTrigger>
+          <TabsTrigger value="logs">Logs</TabsTrigger>
+          <TabsTrigger value="downloads">Download</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -604,6 +635,57 @@ export default function Dashboard() {
                         <TableCell>{session.total_clicks}</TableCell>
                         <TableCell>{format(new Date(session.start_time), 'dd/MM HH:mm', { locale: it })}</TableCell>
                         <TableCell>{session.end_time ? format(new Date(session.end_time), 'dd/MM HH:mm', { locale: it }) : 'Attiva'}</TableCell>
+                      </TableRow>
+                    ))}
+                  </TableBody>
+                </Table>
+              </div>
+            </CardContent>
+          </Card>
+        </TabsContent>
+
+        <TabsContent value="contacts" className="space-y-6">
+          <ContactsWithReply />
+        </TabsContent>
+
+        <TabsContent value="logs" className="space-y-6">
+          <FunctionLogs />
+        </TabsContent>
+
+        <TabsContent value="downloads" className="space-y-6">
+          <Card>
+            <CardHeader>
+              <CardTitle className="flex items-center gap-2">
+                <Download className="h-5 w-5" />
+                Dettagli Download ({analytics?.downloadEvents?.length || 0})
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <div className="overflow-x-auto">
+                <Table>
+                  <TableHeader>
+                    <TableRow>
+                      <TableHead>Data/Ora</TableHead>
+                      <TableHead>Pagina</TableHead>
+                      <TableHead>File</TableHead>
+                      <TableHead>User Agent</TableHead>
+                      <TableHead>IP</TableHead>
+                    </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                    {analytics?.downloadEvents?.slice(0, 50).map((event) => (
+                      <TableRow key={event.id}>
+                        <TableCell className="whitespace-nowrap">
+                          {format(new Date(event.created_at), 'dd/MM/yyyy HH:mm', { locale: it })}
+                        </TableCell>
+                        <TableCell>{event.page_url}</TableCell>
+                        <TableCell>
+                          {event.download_details?.filename || 'PDF Download'}
+                        </TableCell>
+                        <TableCell className="max-w-xs truncate">
+                          {event.user_agent?.split(' ')[0] || '-'}
+                        </TableCell>
+                        <TableCell>{event.ip_address || '-'}</TableCell>
                       </TableRow>
                     ))}
                   </TableBody>
