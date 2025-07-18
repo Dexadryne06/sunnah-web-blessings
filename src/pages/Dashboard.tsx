@@ -65,7 +65,8 @@ export default function Dashboard() {
   useEffect(() => {
     const checkAuth = () => {
       const authStatus = localStorage.getItem('admin-authenticated');
-      setIsAuthenticated(authStatus === 'true');
+      const adminUserId = localStorage.getItem('admin-user-id');
+      setIsAuthenticated(authStatus === 'true' && adminUserId === '00000000-0000-0000-0000-000000000000');
     };
     checkAuth();
   }, []);

@@ -25,6 +25,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
       // Simple hardcoded check for now
       if (credentials.username === 'admin' && credentials.password === 'admin') {
         localStorage.setItem('admin-authenticated', 'true');
+        localStorage.setItem('admin-user-id', '00000000-0000-0000-0000-000000000000');
         onLogin();
         toast.success('Accesso effettuato con successo!');
       } else {
