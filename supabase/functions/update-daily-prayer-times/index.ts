@@ -12,7 +12,10 @@ serve(async (req) => {
   }
 
   try {
-    const today = new Date().toISOString().split('T')[0]
+    // Use Rome timezone for accurate date calculation
+    const today = new Date().toLocaleDateString('en-CA', { 
+      timeZone: 'Europe/Rome' 
+    })
     
     // Get today's prayer times from the prayer_times table
     const { data: prayerTimes, error: selectError } = await supabase
@@ -48,14 +51,22 @@ serve(async (req) => {
       throw upsertError
     }
 
-    return new Response(JSON.stringify({ success: true }), {
+    return new Response(JSON.stringify({ 
+      success: true, 
+      date: today,
+      timestamp: new Date().toISOString()
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 200,
     })
 
   } catch (error) {
     console.error('Error in update-daily-prayer-times:', error)
-    return new Response(JSON.stringify({ error: error.message }), {
+    return new Response(JSON.stringify({ 
+      error: error.message,
+      today: new Date().toLocaleDateString('en-CA', { timeZone: 'Europe/Rome' }),
+      timestamp: new Date().toISOString()
+    }), {
       headers: { ...corsHeaders, 'Content-Type': 'application/json' },
       status: 500,
     })
