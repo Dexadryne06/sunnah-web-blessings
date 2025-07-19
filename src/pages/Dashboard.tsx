@@ -24,12 +24,14 @@ import {
   GraduationCap,
   Eye,
   TrendingUp,
-  LogOut
+  LogOut,
+  Settings
 } from 'lucide-react';
 import { AdminLogin } from '@/components/AdminLogin';
 import { ContactsWithReply } from '@/components/ContactsWithReply';
 import { FunctionLogs } from '@/components/FunctionLogs';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
+import { AdminRegistrationDebug } from '@/components/AdminRegistrationDebug';
 
 interface AnalyticsData {
   totalEvents: number;
@@ -374,7 +376,7 @@ export default function Dashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-8">
+        <TabsList className="grid w-full grid-cols-9">
           <TabsTrigger value="overview">Analytics</TabsTrigger>
           <TabsTrigger value="tables">Database</TabsTrigger>
           <TabsTrigger value="interactions">Interazioni</TabsTrigger>
@@ -383,6 +385,7 @@ export default function Dashboard() {
           <TabsTrigger value="logs">Logs</TabsTrigger>
           <TabsTrigger value="security">Sicurezza</TabsTrigger>
           <TabsTrigger value="downloads">Download</TabsTrigger>
+          <TabsTrigger value="debug">Debug Admin</TabsTrigger>
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
@@ -735,6 +738,10 @@ export default function Dashboard() {
               </div>
             </CardContent>
           </Card>
+        </TabsContent>
+
+        <TabsContent value="debug" className="space-y-6">
+          <AdminRegistrationDebug />
         </TabsContent>
       </Tabs>
     </div>

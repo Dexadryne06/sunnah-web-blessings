@@ -1,11 +1,13 @@
+
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
-import { Lock, User, LogIn, UserPlus } from 'lucide-react';
+import { Lock, User, LogIn, UserPlus, AlertCircle, CheckCircle } from 'lucide-react';
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 interface AdminLoginProps {
   onLogin: () => void;
@@ -18,13 +20,15 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   });
   const [isLoading, setIsLoading] = useState(false);
   const [mode, setMode] = useState<'login' | 'register'>('login');
+  const [registrationStatus, setRegistrationStatus] = useState<'idle' | 'success' | 'error'>('idle');
+  const [errorMessage, setErrorMessage] = useState<string>('');
 
   const logSecurityEvent = async (eventType: string, description: string) => {
     try {
       await supabase.rpc('log_security_event', {
         p_event_type: eventType,
         p_event_description: description,
-        p_ip_address: null, // Frontend can't reliably get IP
+        p_ip_address: null,
         p_user_agent: navigator.userAgent
       });
     } catch (error) {
@@ -35,10 +39,14 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setRegistrationStatus('idle');
+    setErrorMessage('');
 
     try {
       if (mode === 'register') {
-        // Register new admin user
+        console.log('Starting registration process for:', credentials.email);
+        
+        // Register new admin user with proper redirect URL
         const { data: authData, error: authError } = await supabase.auth.signUp({
           email: credentials.email,
           password: credentials.password,
@@ -47,36 +55,83 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           }
         });
 
-        if (authError) throw authError;
+        if (authError) {
+          console.error('Registration auth error:', authError);
+          if (authError.message.includes('already registered')) {
+            setErrorMessage('Questo indirizzo email è già registrato. Prova ad accedere invece.');
+          } else {
+            setErrorMessage(`Errore durante la registrazione: ${authError.message}`);
+          }
+          throw authError;
+        }
+
+        console.log('Registration successful, auth data:', authData);
 
         if (authData.user) {
-          // Add to admin_users_secure table
-          const { error: adminError } = await supabase
+          // Wait a moment for the trigger to execute
+          await new Promise(resolve => setTimeout(resolve, 2000));
+          
+          // Verify admin user was created by the trigger
+          const { data: adminUser, error: adminCheckError } = await supabase
             .from('admin_users_secure')
-            .insert({
-              user_id: authData.user.id,
-              email: credentials.email,
-              role: 'admin'
-            });
+            .select('*')
+            .eq('user_id', authData.user.id)
+            .single();
 
-          if (adminError) throw adminError;
+          console.log('Admin user check result:', { adminUser, adminCheckError });
 
-          await logSecurityEvent('admin_registration', `Admin user registered: ${credentials.email}`);
+          if (adminCheckError && adminCheckError.code !== 'PGRST116') {
+            console.error('Error checking admin user:', adminCheckError);
+            setErrorMessage('Errore nella verifica dell\'utente admin.');
+            throw adminCheckError;
+          }
+
+          if (!adminUser) {
+            console.warn('Admin user not found, attempting manual creation...');
+            // Fallback: try to create admin user manually
+            const { error: manualAdminError } = await supabase
+              .from('admin_users_secure')
+              .insert({
+                user_id: authData.user.id,
+                email: credentials.email,
+                role: 'admin'
+              });
+
+            if (manualAdminError) {
+              console.error('Manual admin creation failed:', manualAdminError);
+              setErrorMessage('Errore nella creazione dell\'utente admin.');
+              throw manualAdminError;
+            }
+            console.log('Manual admin creation successful');
+          }
+
+          await logSecurityEvent('admin_registration_success', `Admin user registered successfully: ${credentials.email}`);
+          
+          setRegistrationStatus('success');
           toast.success('Admin registrato con successo! Controlla la tua email per confermare l\'account.');
+          
+          // Reset form
+          setCredentials({ email: '', password: '' });
         }
       } else {
         // Login existing admin user
+        console.log('Starting login process for:', credentials.email);
+        
         const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
           email: credentials.email,
           password: credentials.password
         });
 
         if (authError) {
+          console.error('Login error:', authError);
           await logSecurityEvent('admin_login_failed', `Failed login attempt for email: ${credentials.email}`);
+          setErrorMessage(`Errore durante l'accesso: ${authError.message}`);
           throw authError;
         }
 
         if (authData.user) {
+          console.log('Login successful, checking admin status...');
+          
           // Check if user is admin
           const { data: adminUser, error: adminError } = await supabase
             .from('admin_users_secure')
@@ -85,9 +140,12 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
             .eq('is_active', true)
             .single();
 
+          console.log('Admin check result:', { adminUser, adminError });
+
           if (adminError || !adminUser) {
             await supabase.auth.signOut();
             await logSecurityEvent('admin_unauthorized_access', `Non-admin user attempted dashboard access: ${credentials.email}`);
+            setErrorMessage('Accesso non autorizzato. Solo gli amministratori possono accedere.');
             throw new Error('Accesso non autorizzato');
           }
 
@@ -104,7 +162,11 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
       }
     } catch (error: any) {
       console.error('Authentication error:', error);
-      toast.error(error.message || 'Errore durante l\'autenticazione');
+      if (!errorMessage) {
+        setErrorMessage(error.message || 'Errore durante l\'autenticazione');
+      }
+      setRegistrationStatus('error');
+      toast.error(errorMessage || error.message || 'Errore durante l\'autenticazione');
     } finally {
       setIsLoading(false);
     }
@@ -123,7 +185,11 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
               <Button
                 variant={mode === 'login' ? 'default' : 'ghost'}
                 size="sm"
-                onClick={() => setMode('login')}
+                onClick={() => {
+                  setMode('login');
+                  setRegistrationStatus('idle');
+                  setErrorMessage('');
+                }}
                 className="flex items-center gap-2"
               >
                 <LogIn className="h-4 w-4" />
@@ -132,7 +198,11 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
               <Button
                 variant={mode === 'register' ? 'default' : 'ghost'}
                 size="sm"
-                onClick={() => setMode('register')}
+                onClick={() => {
+                  setMode('register');
+                  setRegistrationStatus('idle');
+                  setErrorMessage('');
+                }}
                 className="flex items-center gap-2"
               >
                 <UserPlus className="h-4 w-4" />
@@ -142,6 +212,22 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           </div>
         </CardHeader>
         <CardContent>
+          {errorMessage && (
+            <Alert variant="destructive" className="mb-4">
+              <AlertCircle className="h-4 w-4" />
+              <AlertDescription>{errorMessage}</AlertDescription>
+            </Alert>
+          )}
+          
+          {registrationStatus === 'success' && (
+            <Alert className="mb-4 border-green-200 bg-green-50">
+              <CheckCircle className="h-4 w-4 text-green-600" />
+              <AlertDescription className="text-green-800">
+                Registrazione completata con successo! Controlla la tua email.
+              </AlertDescription>
+            </Alert>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div>
               <Label htmlFor="email">Email</Label>
@@ -189,8 +275,15 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
             </Button>
             
             {mode === 'register' && (
+              <div className="text-sm text-muted-foreground text-center space-y-2">
+                <p>La registrazione crea automaticamente un utente admin</p>
+                <p className="text-xs">Potrebbe essere richiesta la conferma email</p>
+              </div>
+            )}
+            
+            {mode === 'login' && (
               <p className="text-sm text-muted-foreground text-center">
-                La registrazione richiede conferma email
+                Non hai un account? Usa la tab "Registrati" per creare un admin
               </p>
             )}
           </form>
