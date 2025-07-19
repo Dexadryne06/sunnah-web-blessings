@@ -59,15 +59,15 @@ export const FunctionLogs = () => {
     try {
       setLoading(true);
       
-      // Get logs from the last 24 hours
-      const twentyFourHoursAgo = new Date();
-      twentyFourHoursAgo.setHours(twentyFourHoursAgo.getHours() - 24);
-      
-      const { data: logs, error } = await supabase
-        .from('edge_function_logs')
-        .select('*')
-        .gte('created_at', twentyFourHoursAgo.toISOString())
-        .order('created_at', { ascending: false });
+      // Use the correct analytics query to get function logs
+      const { data: analyticsData, error } = await supabase.functions.invoke('analytics-query', {
+        body: { 
+          query: `select id, function_logs.timestamp, event_message, metadata.event_type, metadata.function_id, metadata.level from function_logs
+  cross join unnest(metadata) as metadata
+  order by timestamp desc
+  limit 100` 
+        }
+      });
 
       if (error) {
         console.error('Error fetching logs:', error);
@@ -92,7 +92,16 @@ export const FunctionLogs = () => {
         ];
         setLogs(mockLogs);
       } else {
-        setLogs(logs || []);
+        // Transform analytics data to match our FunctionLog interface
+        const transformedLogs: FunctionLog[] = (analyticsData || []).map((log: any) => ({
+          id: log.id,
+          function_name: log.function_id || 'unknown',
+          log_level: log.level || 'info',
+          message: log.event_message || '',
+          metadata: log,
+          created_at: new Date(log.timestamp / 1000).toISOString() // Convert microseconds to milliseconds
+        }));
+        setLogs(transformedLogs);
       }
     } catch (error) {
       console.error('Error loading function logs:', error);
