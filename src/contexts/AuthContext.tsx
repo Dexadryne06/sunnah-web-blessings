@@ -100,6 +100,12 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       async (event, session) => {
         console.log('🔄 Auth state changed:', event, session?.user?.email || 'no user');
         
+        // Skip processing if this is the initial session and we've already processed it
+        if (event === 'INITIAL_SESSION' && user !== null) {
+          console.log('🔄 Skipping INITIAL_SESSION - already processed');
+          return;
+        }
+        
         setSession(session);
         setUser(session?.user ?? null);
         
@@ -115,8 +121,11 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           console.error('❌ Error in auth state change:', error);
           setIsAdmin(false);
         } finally {
-          setLoading(false);
-          console.log('🏁 Auth state change completed, loading set to false');
+          // Only set loading to false for non-initial events or if we don't have a user yet
+          if (event !== 'INITIAL_SESSION' || !user) {
+            setLoading(false);
+            console.log('🏁 Auth state change completed, loading set to false');
+          }
         }
         
         if (event === 'TOKEN_REFRESHED') {

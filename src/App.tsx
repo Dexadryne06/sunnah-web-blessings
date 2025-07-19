@@ -17,6 +17,7 @@ import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { AnalyticsTracker } from "./components/AnalyticsTracker";
 
+// Move queryClient outside component to prevent recreation
 const queryClient = new QueryClient();
 
 const App = () => (
