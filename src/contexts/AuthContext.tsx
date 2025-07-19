@@ -49,16 +49,19 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (error) {
         console.error('❌ Error checking admin status:', error);
         setIsAdmin(false);
+        setLoading(false);
         return false;
       }
 
       const adminStatus = !!adminUser;
       console.log('✅ Admin status:', adminStatus);
       setIsAdmin(adminStatus);
+      setLoading(false);
       return adminStatus;
     } catch (error) {
       console.error('💥 Exception checking admin status:', error);
       setIsAdmin(false);
+      setLoading(false);
       return false;
     }
   };
