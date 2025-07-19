@@ -123,6 +123,7 @@ export const useAnalytics = () => {
 
   const updateSession = async () => {
     try {
+      // Silently fail analytics - don't block the app
       const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
       
       await supabase.from('user_sessions').upsert({
@@ -135,12 +136,13 @@ export const useAnalytics = () => {
         onConflict: 'session_id'
       });
     } catch (error) {
-      console.error('Session update error:', error);
+      // Silent fail - analytics should never block the app
     }
   };
 
   const endSession = async () => {
     try {
+      // Silently fail analytics - don't block the app
       const duration = Math.floor((Date.now() - sessionStartTime.current) / 1000);
       
       await supabase.from('user_sessions').update({
@@ -151,7 +153,7 @@ export const useAnalytics = () => {
         updated_at: new Date().toISOString()
       }).eq('session_id', sessionId.current);
     } catch (error) {
-      console.error('Session end error:', error);
+      // Silent fail - analytics should never block the app
     }
   };
 

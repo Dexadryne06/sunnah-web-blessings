@@ -62,43 +62,15 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   useEffect(() => {
-    console.log('🚀 AuthProvider initializing');
-    
-    let isInitialized = false;
+    let mounted = true;
+    let subscription: any;
 
-    const initializeAuth = async () => {
+    const initialize = async () => {
       try {
-        const { data: { session }, error } = await supabase.auth.getSession();
+        // Get current session
+        const { data: { session } } = await supabase.auth.getSession();
         
-        if (error) {
-          console.error('❌ Session error:', error);
-        } else {
-          console.log('📋 Initial session:', session?.user?.email || 'no session');
-          setSession(session);
-          setUser(session?.user ?? null);
-          
-          if (session?.user) {
-            await checkAdminStatus(session.user.id);
-          } else {
-            setIsAdmin(false);
-          }
-        }
-        
-        isInitialized = true;
-      } catch (error) {
-        console.error('💥 Init error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log('🔄 Auth event:', event);
-        
-        if (event === 'INITIAL_SESSION' && isInitialized) {
-          return;
-        }
+        if (!mounted) return;
         
         setSession(session);
         setUser(session?.user ?? null);
@@ -109,17 +81,33 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
           setIsAdmin(false);
         }
         
-        if (!isInitialized) {
-          setLoading(false);
-        }
+        setLoading(false);
+        
+        // Set up auth listener
+        subscription = supabase.auth.onAuthStateChange((event, session) => {
+          if (!mounted) return;
+          
+          setSession(session);
+          setUser(session?.user ?? null);
+          
+          if (session?.user) {
+            checkAdminStatus(session.user.id);
+          } else {
+            setIsAdmin(false);
+          }
+        });
+        
+      } catch (error) {
+        console.error('Auth init error:', error);
+        if (mounted) setLoading(false);
       }
-    );
+    };
 
-    initializeAuth();
+    initialize();
 
     return () => {
-      console.log('🧹 Auth cleanup');
-      subscription.unsubscribe();
+      mounted = false;
+      subscription?.data?.subscription?.unsubscribe();
     };
   }, []);
 
