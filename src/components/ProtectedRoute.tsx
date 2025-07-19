@@ -13,7 +13,8 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
 
   console.log('🛡️ ProtectedRoute:', { hasUser: !!user, loading, isAdmin, requireAdmin });
 
-  if (loading) {
+  // If we have a user but still loading admin status, wait only briefly
+  if (loading || (user && requireAdmin && isAdmin === false && loading)) {
     return (
       <div className="container mx-auto py-8">
         <div className="flex items-center justify-center min-h-[400px]">
