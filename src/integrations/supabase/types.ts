@@ -453,6 +453,7 @@ export type Database = {
           session_id: string
           start_time: string
           total_clicks: number | null
+          updated_at: string | null
         }
         Insert: {
           created_at?: string
@@ -463,6 +464,7 @@ export type Database = {
           session_id: string
           start_time?: string
           total_clicks?: number | null
+          updated_at?: string | null
         }
         Update: {
           created_at?: string
@@ -473,6 +475,7 @@ export type Database = {
           session_id?: string
           start_time?: string
           total_clicks?: number | null
+          updated_at?: string | null
         }
         Relationships: []
       }
