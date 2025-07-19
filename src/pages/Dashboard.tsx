@@ -262,6 +262,19 @@ export default function Dashboard() {
     let formatPattern = 'dd/MM';
     
     switch (timeFrame) {
+        case '3h':
+        filterDate = new Date(now.getTime() - 3 * 60 * 60 * 1000);
+        formatPattern = 'HH:mm';
+        // Generate hourly data for last 6 hours
+        return Array.from({ length: 6 }, (_, i) => {
+          const date = new Date(now.getTime() - (2 - i) * 60 * 60 * 1000);
+          const dateStr = format(date, formatPattern);
+          return {
+            date: dateStr,
+            events: Math.floor(Math.random() * 10), // Mock data for hours
+            sessions: Math.floor(Math.random() * 5)
+          };
+        });
       case '6h':
         filterDate = new Date(now.getTime() - 6 * 60 * 60 * 1000);
         formatPattern = 'HH:mm';
@@ -412,6 +425,7 @@ export default function Dashboard() {
                     onChange={(e) => setActivityTimeFrame(e.target.value)}
                     className="px-3 py-1 border rounded-md text-sm"
                   >
+                    <option value="3h">Ultime 3 ore</option>
                     <option value="6h">Ultime 6 ore</option>
                     <option value="12h">Ultime 12 ore</option>
                     <option value="24h">Ultime 24 ore</option>
