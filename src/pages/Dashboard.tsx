@@ -32,6 +32,7 @@ import { ContactsWithReply } from '@/components/ContactsWithReply';
 import { FunctionLogs } from '@/components/FunctionLogs';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
 import { AdminRegistrationDebug } from '@/components/AdminRegistrationDebug';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AnalyticsData {
   totalEvents: number;
@@ -57,63 +58,32 @@ interface DatabaseTables {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#0088fe'];
 
 export default function Dashboard() {
+  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [tables, setTables] = useState<DatabaseTables | null>(null);
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
-  const [isAuthenticated, setIsAuthenticated] = useState(false);
 
-  // Check authentication on mount
+  // Load dashboard data when user is authenticated and is admin
   useEffect(() => {
-    const checkAuth = async () => {
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session?.user) {
-        // Check if user is admin
-        const { data: adminUser, error } = await supabase
-          .from('admin_users_secure')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .eq('is_active', true)
-          .single();
-        
-        setIsAuthenticated(!!adminUser && !error);
-      } else {
-        setIsAuthenticated(false);
-      }
-    };
-    
-    checkAuth();
-
-    // Listen for auth changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
-      if (session?.user) {
-        const { data: adminUser, error } = await supabase
-          .from('admin_users_secure')
-          .select('*')
-          .eq('user_id', session.user.id)
-          .eq('is_active', true)
-          .single();
-        
-        setIsAuthenticated(!!adminUser && !error);
-      } else {
-        setIsAuthenticated(false);
-      }
+    console.log('📊 Dashboard effect triggered:', { 
+      hasUser: !!user, 
+      isAdmin, 
+      authLoading 
     });
-
-    return () => subscription.unsubscribe();
-  }, []);
-
-  // Load dashboard data only when authenticated
-  useEffect(() => {
-    if (isAuthenticated) {
+    
+    if (!authLoading && user && isAdmin) {
+      console.log('✅ Loading dashboard data for admin user');
       loadDashboardData();
+    } else if (!authLoading) {
+      console.log('❌ Not loading dashboard data:', { hasUser: !!user, isAdmin });
     }
-  }, [isAuthenticated]);
+  }, [user, isAdmin, authLoading]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
-    setIsAuthenticated(false);
+    console.log('👋 Logging out...');
+    await signOut();
   };
 
   const updatePrayerTimes = async () => {
@@ -133,6 +103,7 @@ export default function Dashboard() {
 
   const loadDashboardData = async () => {
     try {
+      console.log('📊 Loading dashboard data...');
       setLoading(true);
       
       // Load analytics data
@@ -143,8 +114,9 @@ export default function Dashboard() {
       const tablesData = await loadTables();
       setTables(tablesData);
       
+      console.log('✅ Dashboard data loaded successfully');
     } catch (error) {
-      console.error('Error loading dashboard data:', error);
+      console.error('❌ Error loading dashboard data:', error);
     } finally {
       setLoading(false);
     }
@@ -291,24 +263,23 @@ export default function Dashboard() {
     };
   };
 
-  // Show login screen if not authenticated
-  if (!isAuthenticated) {
-    return <AdminLogin onLogin={() => {
-      // Ricontrolliamo l'autenticazione dopo il login
-      setTimeout(async () => {
-        const { data: { session } } = await supabase.auth.getSession();
-        if (session?.user) {
-          const { data: adminUser, error } = await supabase
-            .from('admin_users_secure')
-            .select('*')
-            .eq('user_id', session.user.id)
-            .eq('is_active', true)
-            .single();
-          
-          setIsAuthenticated(!!adminUser && !error);
-        }
-      }, 100);
-    }} />;
+  // Show login screen if not authenticated or not admin
+  if (authLoading) {
+    return (
+      <div className="container mx-auto py-8">
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="text-center">
+            <div className="animate-spin h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
+            <p>Verifica autenticazione...</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  if (!user || !isAdmin) {
+    console.log('🚪 Showing login screen:', { hasUser: !!user, isAdmin });
+    return <AdminLogin />;
   }
 
   if (loading) {

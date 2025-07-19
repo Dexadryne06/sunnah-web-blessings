@@ -10,12 +10,8 @@ import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { useAuth } from '@/contexts/AuthContext';
 
-interface AdminLoginProps {
-  onLogin: () => void;
-}
-
-export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
-  const { signIn, signUp, resetPassword, loading: authLoading } = useAuth();
+export const AdminLogin = () => {
+  const { signIn, signUp, loading: authLoading } = useAuth();
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
@@ -40,18 +36,20 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    console.log(`🎯 Starting ${mode} process for:`, credentials.email);
+    
     setIsLoading(true);
     setRegistrationStatus('idle');
     setErrorMessage('');
 
     try {
       if (mode === 'register') {
-        console.log('Starting registration process for:', credentials.email);
+        console.log('📝 Registration process starting...');
         
         const { error: authError } = await signUp(credentials.email, credentials.password);
 
         if (authError) {
-          console.error('Registration auth error:', authError);
+          console.error('❌ Registration auth error:', authError);
           if (authError.message.includes('already registered')) {
             setErrorMessage('Questo indirizzo email è già registrato. Prova ad accedere invece.');
           } else {
@@ -60,10 +58,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           throw authError;
         }
 
-        console.log('Registration successful');
-        
-        // Wait a moment for the trigger to execute and check admin creation
-        await new Promise(resolve => setTimeout(resolve, 2000));
+        console.log('✅ Registration successful');
         
         await logSecurityEvent('admin_registration_success', `Admin user registered successfully: ${credentials.email}`);
         
@@ -74,13 +69,12 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
         setCredentials({ email: '', password: '' });
         
       } else {
-        // Login existing admin user
-        console.log('Starting login process for:', credentials.email);
+        console.log('🔐 Login process starting...');
         
         const { error: authError } = await signIn(credentials.email, credentials.password);
 
         if (authError) {
-          console.error('Login error:', authError);
+          console.error('❌ Login error:', authError);
           await logSecurityEvent('admin_login_failed', `Failed login attempt for email: ${credentials.email}`);
           
           if (authError.message.includes('Invalid login credentials')) {
@@ -91,59 +85,24 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           throw authError;
         }
 
-        console.log('Login successful, checking admin status...');
-        
-        // Get current user from session to check admin status
-        const { data: { user } } = await supabase.auth.getUser();
-        
-        if (user) {
-          // Check if user is admin
-          const { data: adminUser, error: adminError } = await supabase
-            .from('admin_users_secure')
-            .select('*')
-            .eq('user_id', user.id)
-            .eq('is_active', true)
-            .maybeSingle();
-
-          console.log('Admin check result:', { adminUser, adminError });
-
-          if (adminError) {
-            console.error('Error checking admin status:', adminError);
-            await supabase.auth.signOut();
-            await logSecurityEvent('admin_check_error', `Error checking admin status for: ${credentials.email}`);
-            setErrorMessage('Errore nella verifica dello stato admin.');
-            throw adminError;
-          }
-
-          if (!adminUser) {
-            await supabase.auth.signOut();
-            await logSecurityEvent('admin_unauthorized_access', `Non-admin user attempted dashboard access: ${credentials.email}`);
-            setErrorMessage('Accesso non autorizzato. Solo gli amministratori possono accedere.');
-            throw new Error('Accesso non autorizzato');
-          }
-
-          // Update last login
-          await supabase
-            .from('admin_users_secure')
-            .update({ last_login: new Date().toISOString() })
-            .eq('user_id', user.id);
-
-          await logSecurityEvent('admin_login_success', `Admin user logged in: ${credentials.email}`);
-          onLogin();
-          toast.success('Accesso effettuato con successo!');
-        }
+        console.log('✅ Login successful, admin verification will be handled by AuthContext');
+        await logSecurityEvent('admin_login_success', `Admin user logged in: ${credentials.email}`);
+        toast.success('Accesso effettuato con successo!');
       }
     } catch (error: any) {
-      console.error('Authentication error:', error);
+      console.error('💥 Authentication error:', error);
       if (!errorMessage) {
         setErrorMessage(error.message || 'Errore durante l\'autenticazione');
       }
       setRegistrationStatus('error');
       toast.error(errorMessage || error.message || 'Errore durante l\'autenticazione');
     } finally {
+      console.log('🏁 Authentication process completed');
       setIsLoading(false);
     }
   };
+
+  const loading = isLoading || authLoading;
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-background">
@@ -214,6 +173,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
                   className="pl-10"
                   placeholder="admin@example.com"
                   required
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -231,6 +191,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
                   placeholder="Password sicura"
                   required
                   minLength={6}
+                  disabled={loading}
                 />
               </div>
             </div>
@@ -238,9 +199,9 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
             <Button 
               type="submit" 
               className="w-full"
-              disabled={isLoading}
+              disabled={loading}
             >
-              {isLoading ? (
+              {loading ? (
                 mode === 'register' ? 'Registrazione in corso...' : 'Accesso in corso...'
               ) : (
                 mode === 'register' ? 'Registra Admin' : 'Accedi'
@@ -271,7 +232,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
                   }
                   setIsLoading(false);
                 }}
-                disabled={isLoading}
+                disabled={loading}
               >
                 Password dimenticata?
               </Button>
