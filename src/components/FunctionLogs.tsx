@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -60,19 +59,11 @@ export const FunctionLogs = () => {
     try {
       setLoading(true);
       
-      // Calculate 24 hours ago in microseconds (Supabase analytics uses microseconds)
-      const twentyFourHoursAgo = Date.now() - (24 * 60 * 60 * 1000);
-      const twentyFourHoursAgoMicroseconds = twentyFourHoursAgo * 1000;
-      
-      console.log('Fetching logs for update-daily-prayer-times from last 24 hours...');
-      
-      // Use the correct analytics query to get function logs for update-daily-prayer-times
+      // Use the correct analytics query to get function logs
       const { data: analyticsData, error } = await supabase.functions.invoke('analytics-query', {
         body: { 
           query: `select id, function_logs.timestamp, event_message, metadata.event_type, metadata.function_id, metadata.level from function_logs
   cross join unnest(metadata) as metadata
-  where metadata.function_id = 'update-daily-prayer-times'
-  and function_logs.timestamp > ${twentyFourHoursAgoMicroseconds}
   order by timestamp desc
   limit 100` 
         }
@@ -100,33 +91,17 @@ export const FunctionLogs = () => {
           }
         ];
         setLogs(mockLogs);
-        toast.error('Errore nel caricamento dei log, mostro dati mock');
       } else {
-        console.log('Analytics data received:', analyticsData);
-        
         // Transform analytics data to match our FunctionLog interface
         const transformedLogs: FunctionLog[] = (analyticsData || []).map((log: any) => ({
-          id: log.id || Math.random().toString(),
-          function_name: log.function_id || 'update-daily-prayer-times',
+          id: log.id,
+          function_name: log.function_id || 'unknown',
           log_level: log.level || 'info',
-          message: log.event_message || 'Log message',
-          metadata: {
-            event_type: log.event_type,
-            function_id: log.function_id,
-            level: log.level,
-            timestamp: log.timestamp
-          },
+          message: log.event_message || '',
+          metadata: log,
           created_at: new Date(log.timestamp / 1000).toISOString() // Convert microseconds to milliseconds
         }));
-        
-        console.log('Transformed logs:', transformedLogs);
         setLogs(transformedLogs);
-        
-        if (transformedLogs.length === 0) {
-          toast.info('Nessun log trovato per update-daily-prayer-times nelle ultime 24 ore');
-        } else {
-          toast.success(`Caricati ${transformedLogs.length} log per update-daily-prayer-times`);
-        }
       }
     } catch (error) {
       console.error('Error loading function logs:', error);
@@ -161,7 +136,7 @@ export const FunctionLogs = () => {
         <div className="flex items-center justify-between">
           <CardTitle className="flex items-center gap-2">
             <Terminal className="h-5 w-5" />
-            Log Edge Functions - update-daily-prayer-times ({logs.length})
+            Log Edge Functions ({logs.length})
           </CardTitle>
           <Button onClick={loadLogs} variant="outline" size="sm">
             <RefreshCw className="h-4 w-4 mr-2" />
@@ -173,8 +148,7 @@ export const FunctionLogs = () => {
         {Object.keys(logsByFunction).length === 0 ? (
           <div className="text-center text-muted-foreground py-8">
             <Terminal className="h-12 w-12 mx-auto mb-4 opacity-50" />
-            <p>Nessun log disponibile per update-daily-prayer-times nelle ultime 24 ore</p>
-            <p className="text-sm mt-2">Prova a eseguire la funzione o controlla i filtri</p>
+            <p>Nessun log disponibile</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -197,7 +171,7 @@ export const FunctionLogs = () => {
                       </TableRow>
                     </TableHeader>
                     <TableBody>
-                      {functionLogs.slice(0, 50).map((log) => (
+                      {functionLogs.slice(0, 10).map((log) => (
                         <TableRow key={log.id}>
                           <TableCell>
                             <LogLevelBadge level={log.log_level} />
