@@ -36,7 +36,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   const checkAdminStatus = async (userId: string) => {
     console.log('🔍 Checking admin status for user:', userId);
-    setLoading(true);
     try {
       const { data: adminUser, error } = await supabase
         .from('admin_users_secure')
@@ -50,21 +49,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       if (error) {
         console.error('❌ Error checking admin status:', error);
         setIsAdmin(false);
-        setLoading(false);
         return false;
       }
 
       const adminStatus = !!adminUser;
       console.log('✅ Admin status:', adminStatus);
       setIsAdmin(adminStatus);
-      setLoading(false);
-      console.log('🏁 CheckAdminStatus completed, loading set to false');
       return adminStatus;
     } catch (error) {
       console.error('💥 Exception checking admin status:', error);
       setIsAdmin(false);
-      setLoading(false);
-      console.log('🏁 CheckAdminStatus failed, loading set to false');
       return false;
     }
   };
