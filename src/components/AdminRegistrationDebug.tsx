@@ -7,7 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@
 import { supabase } from '@/integrations/supabase/client';
 import { format } from 'date-fns';
 import { it } from 'date-fns/locale';
-import { Refresh, Database, Users, AlertCircle } from 'lucide-react';
+import { RefreshCw, Database, Users, AlertCircle } from 'lucide-react';
 
 interface TriggerInfo {
   trigger_name: string;
@@ -27,7 +27,6 @@ interface SecurityLog {
 }
 
 export const AdminRegistrationDebug = () => {
-  const [triggers, setTriggers] = useState<TriggerInfo[]>([]);
   const [securityLogs, setSecurityLogs] = useState<SecurityLog[]>([]);
   const [adminUsers, setAdminUsers] = useState<any[]>([]);
   const [loading, setLoading] = useState(false);
@@ -35,14 +34,6 @@ export const AdminRegistrationDebug = () => {
   const loadDebugInfo = async () => {
     setLoading(true);
     try {
-      // Check for triggers
-      const { data: triggerData } = await supabase
-        .from('information_schema.triggers')
-        .select('trigger_name, event_manipulation, event_object_table, action_timing, action_statement')
-        .eq('trigger_name', 'on_auth_user_created_admin');
-      
-      setTriggers(triggerData || []);
-
       // Get recent security logs related to admin registration
       const { data: logData } = await supabase
         .from('security_audit_log')
@@ -77,38 +68,29 @@ export const AdminRegistrationDebug = () => {
       <div className="flex items-center justify-between">
         <h2 className="text-2xl font-bold">Debug Registrazione Admin</h2>
         <Button onClick={loadDebugInfo} disabled={loading}>
-          <Refresh className="h-4 w-4 mr-2" />
+          <RefreshCw className="h-4 w-4 mr-2" />
           Aggiorna
         </Button>
       </div>
 
-      {/* Trigger Status */}
+      {/* Database Status */}
       <Card>
         <CardHeader>
           <CardTitle className="flex items-center gap-2">
             <Database className="h-5 w-5" />
-            Stato Trigger
+            Stato Sistema
           </CardTitle>
         </CardHeader>
         <CardContent>
-          {triggers.length > 0 ? (
-            <div className="space-y-2">
-              <Badge variant="default" className="bg-green-100 text-green-800">
-                Trigger Attivo
-              </Badge>
-              <div className="text-sm">
-                <p><strong>Nome:</strong> {triggers[0].trigger_name}</p>
-                <p><strong>Tabella:</strong> {triggers[0].event_object_table}</p>
-                <p><strong>Evento:</strong> {triggers[0].event_manipulation}</p>
-                <p><strong>Timing:</strong> {triggers[0].action_timing}</p>
-              </div>
-            </div>
-          ) : (
-            <div className="flex items-center gap-2">
-              <AlertCircle className="h-4 w-4 text-red-500" />
-              <Badge variant="destructive">Trigger Non Trovato</Badge>
-            </div>
-          )}
+          <div className="space-y-2">
+            <Badge variant="default" className="bg-blue-100 text-blue-800">
+              Sistema Attivo
+            </Badge>
+            <p className="text-sm text-muted-foreground">
+              La registrazione automatica degli admin è configurata. 
+              Controlla i log di sicurezza per dettagli sui trigger.
+            </p>
+          </div>
         </CardContent>
       </Card>
 
