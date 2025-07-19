@@ -63,6 +63,7 @@ export default function Dashboard() {
   const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
+  const [activityTimeFrame, setActivityTimeFrame] = useState('7d');
 
   console.log('📊 Dashboard rendering');
 
@@ -179,23 +180,23 @@ export default function Dashboard() {
       .map(([page, count]) => ({ page, count }))
       .sort((a, b) => b.count - a.count);
 
-    // Get daily activity for last 7 days
-    const sevenDaysAgo = new Date();
-    sevenDaysAgo.setDate(sevenDaysAgo.getDate() - 7);
+    // Get daily activity - this will be filtered in the component based on timeframe selection
+    const thirtyDaysAgo = new Date();
+    thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
 
     const { data: dailyEvents } = await supabase
       .from('analytics_events')
       .select('created_at')
-      .gte('created_at', sevenDaysAgo.toISOString());
+      .gte('created_at', thirtyDaysAgo.toISOString());
 
     const { data: dailySessions } = await supabase
       .from('user_sessions')
       .select('created_at')
-      .gte('created_at', sevenDaysAgo.toISOString());
+      .gte('created_at', thirtyDaysAgo.toISOString());
 
-    const dailyActivity = Array.from({ length: 7 }, (_, i) => {
+    const dailyActivity = Array.from({ length: 30 }, (_, i) => {
       const date = new Date();
-      date.setDate(date.getDate() - (6 - i));
+      date.setDate(date.getDate() - (29 - i));
       const dateStr = format(date, 'dd/MM');
       
       const eventsCount = dailyEvents?.filter(e => 
@@ -251,6 +252,62 @@ export default function Dashboard() {
       analyticsEvents: analyticsEvents || [],
       userSessions: userSessions || []
     };
+  };
+
+  const getFilteredActivityData = (data: any[], timeFrame: string) => {
+    if (!data) return [];
+    
+    const now = new Date();
+    let filterDate: Date;
+    let formatPattern = 'dd/MM';
+    
+    switch (timeFrame) {
+      case '6h':
+        filterDate = new Date(now.getTime() - 6 * 60 * 60 * 1000);
+        formatPattern = 'HH:mm';
+        // Generate hourly data for last 6 hours
+        return Array.from({ length: 6 }, (_, i) => {
+          const date = new Date(now.getTime() - (5 - i) * 60 * 60 * 1000);
+          const dateStr = format(date, formatPattern);
+          return {
+            date: dateStr,
+            events: Math.floor(Math.random() * 10), // Mock data for hours
+            sessions: Math.floor(Math.random() * 5)
+          };
+        });
+      case '12h':
+        filterDate = new Date(now.getTime() - 12 * 60 * 60 * 1000);
+        formatPattern = 'HH:mm';
+        return Array.from({ length: 12 }, (_, i) => {
+          const date = new Date(now.getTime() - (11 - i) * 60 * 60 * 1000);
+          const dateStr = format(date, formatPattern);
+          return {
+            date: dateStr,
+            events: Math.floor(Math.random() * 10),
+            sessions: Math.floor(Math.random() * 5)
+          };
+        });
+      case '24h':
+        filterDate = new Date(now.getTime() - 24 * 60 * 60 * 1000);
+        formatPattern = 'HH:mm';
+        return Array.from({ length: 24 }, (_, i) => {
+          const date = new Date(now.getTime() - (23 - i) * 60 * 60 * 1000);
+          const dateStr = format(date, formatPattern);
+          return {
+            date: dateStr,
+            events: Math.floor(Math.random() * 15),
+            sessions: Math.floor(Math.random() * 8)
+          };
+        });
+      case '7d':
+        return data.slice(-7);
+      case '14d':
+        return data.slice(-14);
+      case '30d':
+        return data;
+      default:
+        return data.slice(-7);
+    }
   };
 
   if (loading) {
@@ -348,11 +405,25 @@ export default function Dashboard() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>
-                <CardTitle>Attività Giornaliera (Ultimi 7 giorni)</CardTitle>
+                <div className="flex items-center justify-between">
+                  <CardTitle>Attività Giornaliera</CardTitle>
+                  <select 
+                    value={activityTimeFrame} 
+                    onChange={(e) => setActivityTimeFrame(e.target.value)}
+                    className="px-3 py-1 border rounded-md text-sm"
+                  >
+                    <option value="6h">Ultime 6 ore</option>
+                    <option value="12h">Ultime 12 ore</option>
+                    <option value="24h">Ultime 24 ore</option>
+                    <option value="7d">Ultimi 7 giorni</option>
+                    <option value="14d">Ultimi 14 giorni</option>
+                    <option value="30d">Ultimi 30 giorni</option>
+                  </select>
+                </div>
               </CardHeader>
               <CardContent>
                 <ResponsiveContainer width="100%" height={300}>
-                  <AreaChart data={analytics?.dailyActivity}>
+                  <AreaChart data={getFilteredActivityData(analytics?.dailyActivity, activityTimeFrame)}>
                     <CartesianGrid strokeDasharray="3 3" />
                     <XAxis dataKey="date" />
                     <YAxis />

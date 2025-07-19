@@ -176,13 +176,13 @@ export const AdminRegistrationDebug = () => {
                     <TableCell className="max-w-md truncate">
                       {log.event_description}
                     </TableCell>
-                    <TableCell className="max-w-xs">
-                      {log.metadata && (
-                        <pre className="text-xs bg-muted p-1 rounded">
-                          {JSON.stringify(log.metadata, null, 2)}
-                        </pre>
-                      )}
-                    </TableCell>
+                     <TableCell className="max-w-xs pr-8">
+                       {log.metadata && (
+                         <pre className="text-xs bg-muted p-1 rounded max-w-[200px] overflow-auto">
+                           {JSON.stringify(log.metadata, null, 2)}
+                         </pre>
+                       )}
+                     </TableCell>
                     <TableCell>
                       {format(new Date(log.created_at), 'dd/MM/yyyy HH:mm:ss', { locale: it })}
                     </TableCell>
