@@ -22,9 +22,9 @@ export function usePrayerTimes() {
           .from('current_prayer_times')
           .select('*')
           .limit(1)
-          .single();
+          .maybeSingle();
 
-        if (currentError && currentError.code !== 'PGRST116') {
+        if (currentError) {
           throw currentError;
         }
 
@@ -51,7 +51,7 @@ export function usePrayerTimes() {
                 .from('current_prayer_times')
                 .select('*')
                 .limit(1)
-                .single();
+                .maybeSingle();
               
               if (!refetchError && updatedData) {
                 const formattedTimes: PrayerTime[] = [
@@ -90,9 +90,12 @@ export function usePrayerTimes() {
             .select('*')
             .eq('date', today)
             .limit(1)
-            .single();
+            .maybeSingle();
 
-          if (fallbackError) throw fallbackError;
+          if (fallbackError) {
+            console.error('Fallback error:', fallbackError);
+            // Don't throw, just use default times
+          }
 
           if (fallbackData) {
             const formattedTimes: PrayerTime[] = [
