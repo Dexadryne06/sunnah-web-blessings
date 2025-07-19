@@ -66,15 +66,26 @@ export const FunctionLogs = () => {
       
       console.log('Fetching logs for update-daily-prayer-times from last 24 hours...');
       
-      // Use the correct analytics query to get function logs for update-daily-prayer-times
+      // Use the analytics query with the specific function ID
       const { data: analyticsData, error } = await supabase.functions.invoke('analytics-query', {
         body: { 
-          query: `select id, function_logs.timestamp, event_message, metadata.event_type, metadata.function_id, metadata.level from function_logs
-  cross join unnest(metadata) as metadata
-  where metadata.function_id = 'update-daily-prayer-times'
-  and function_logs.timestamp > ${twentyFourHoursAgoMicroseconds}
-  order by timestamp desc
-  limit 100` 
+          query: `SELECT
+  id,
+  function_logs.timestamp,
+  event_message,
+  metadata.event_type,
+  metadata.function_id,
+  metadata.level
+FROM
+  function_logs
+CROSS JOIN
+  UNNEST(metadata) AS metadata
+WHERE
+  metadata.function_id = '98ec646a-a6d6-4f8c-95a3-c0fb122f1d91'
+  AND function_logs.timestamp >= NOW() - INTERVAL '24 hours'
+ORDER BY
+  function_logs.timestamp DESC
+LIMIT 100` 
         }
       });
 
