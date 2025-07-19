@@ -16,34 +16,37 @@ import { CookiePolicy } from "./pages/CookiePolicy";
 import { PrivacyPolicy } from "./pages/PrivacyPolicy";
 import NotFound from "./pages/NotFound";
 import { AnalyticsTracker } from "./components/AnalyticsTracker";
+import { AuthProvider } from "./contexts/AuthContext";
 
 // Move queryClient outside component to prevent recreation
 const queryClient = new QueryClient();
 
 const App = () => (
   <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <Toaster />
-      <Sonner />
-      <BrowserRouter>
-        <AnalyticsTracker />
-        <Routes>
-          <Route path="/" element={<Layout />}>
-            <Route index element={<Home />} />
-            <Route path="chi-siamo" element={<ChiSiamo />} />
-            <Route path="libri" element={<Libri />} />
-            <Route path="acquista-o-noleggia" element={<AcquistaOPrendiInPrestito />} />
-            <Route path="lezioni" element={<Lezioni />} />
-            <Route path="dona" element={<Dona />} />
-            <Route path="contattaci" element={<Contattaci />} />
-            <Route path="dashboard" element={<Dashboard />} />
-            <Route path="cookie-policy" element={<CookiePolicy />} />
-            <Route path="privacy-policy" element={<PrivacyPolicy />} />
-          </Route>
-          <Route path="*" element={<NotFound />} />
-        </Routes>
-      </BrowserRouter>
-    </TooltipProvider>
+    <AuthProvider>
+      <TooltipProvider>
+        <Toaster />
+        <Sonner />
+        <BrowserRouter>
+          <AnalyticsTracker />
+          <Routes>
+            <Route path="/" element={<Layout />}>
+              <Route index element={<Home />} />
+              <Route path="chi-siamo" element={<ChiSiamo />} />
+              <Route path="libri" element={<Libri />} />
+              <Route path="acquista-o-noleggia" element={<AcquistaOPrendiInPrestito />} />
+              <Route path="lezioni" element={<Lezioni />} />
+              <Route path="dona" element={<Dona />} />
+              <Route path="contattaci" element={<Contattaci />} />
+              <Route path="dashboard" element={<Dashboard />} />
+              <Route path="cookie-policy" element={<CookiePolicy />} />
+              <Route path="privacy-policy" element={<PrivacyPolicy />} />
+            </Route>
+            <Route path="*" element={<NotFound />} />
+          </Routes>
+        </BrowserRouter>
+      </TooltipProvider>
+    </AuthProvider>
   </QueryClientProvider>
 );
 
