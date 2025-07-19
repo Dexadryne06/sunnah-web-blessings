@@ -61,24 +61,20 @@ export default function Dashboard() {
   const { user, isAdmin, loading: authLoading, signOut } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [tables, setTables] = useState<DatabaseTables | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(false);
   const [activeTab, setActiveTab] = useState('overview');
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
+  const [dashboardAuthenticated, setDashboardAuthenticated] = useState(false);
 
-  // Load dashboard data when user is authenticated and is admin
+  // Check if user is admin and authenticated for dashboard
   useEffect(() => {
-    console.log('📊 Dashboard effect triggered:', { 
-      hasUser: !!user, 
-      isAdmin, 
-      authLoading 
-    });
-    
-    if (!authLoading && user && isAdmin) {
-      console.log('✅ Loading dashboard data for admin user');
-      loadDashboardData();
-    } else if (!authLoading) {
-      console.log('❌ Not loading dashboard data:', { hasUser: !!user, isAdmin });
-      setLoading(false); // Important: stop loading if conditions aren't met
+    if (!authLoading) {
+      if (user && isAdmin) {
+        setDashboardAuthenticated(true);
+        loadDashboardData();
+      } else {
+        setDashboardAuthenticated(false);
+      }
     }
   }, [user, isAdmin, authLoading]);
 
@@ -278,8 +274,7 @@ export default function Dashboard() {
     );
   }
 
-  if (!user || !isAdmin) {
-    console.log('🚪 Showing login screen:', { hasUser: !!user, isAdmin });
+  if (!dashboardAuthenticated) {
     return <AdminLogin />;
   }
 
