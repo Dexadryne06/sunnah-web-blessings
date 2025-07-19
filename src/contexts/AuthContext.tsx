@@ -103,12 +103,20 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         setSession(session);
         setUser(session?.user ?? null);
         
-        if (session?.user) {
-          console.log('👤 User signed in, checking admin status...');
-          await checkAdminStatus(session.user.id);
-        } else {
-          console.log('👋 User signed out');
+        try {
+          if (session?.user) {
+            console.log('👤 User signed in, checking admin status...');
+            await checkAdminStatus(session.user.id);
+          } else {
+            console.log('👋 User signed out');
+            setIsAdmin(false);
+          }
+        } catch (error) {
+          console.error('❌ Error in auth state change:', error);
           setIsAdmin(false);
+        } finally {
+          setLoading(false);
+          console.log('🏁 Auth state change completed, loading set to false');
         }
         
         if (event === 'TOKEN_REFRESHED') {
@@ -118,8 +126,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         } else if (event === 'SIGNED_IN') {
           console.log('👤 User signed in event');
         }
-        
-        setLoading(false);
       }
     );
 
