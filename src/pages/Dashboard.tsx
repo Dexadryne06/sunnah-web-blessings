@@ -78,6 +78,7 @@ export default function Dashboard() {
       loadDashboardData();
     } else if (!authLoading) {
       console.log('❌ Not loading dashboard data:', { hasUser: !!user, isAdmin });
+      setLoading(false); // Important: stop loading if conditions aren't met
     }
   }, [user, isAdmin, authLoading]);
 
