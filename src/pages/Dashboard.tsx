@@ -293,7 +293,22 @@ export default function Dashboard() {
 
   // Show login screen if not authenticated
   if (!isAuthenticated) {
-    return <AdminLogin onLogin={() => setIsAuthenticated(true)} />;
+    return <AdminLogin onLogin={() => {
+      // Ricontrolliamo l'autenticazione dopo il login
+      setTimeout(async () => {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (session?.user) {
+          const { data: adminUser, error } = await supabase
+            .from('admin_users_secure')
+            .select('*')
+            .eq('user_id', session.user.id)
+            .eq('is_active', true)
+            .single();
+          
+          setIsAuthenticated(!!adminUser && !error);
+        }
+      }, 100);
+    }} />;
   }
 
   if (loading) {
