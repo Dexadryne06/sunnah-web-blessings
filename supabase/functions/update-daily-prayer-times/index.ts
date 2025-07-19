@@ -45,25 +45,24 @@ serve(async (req) => {
 
     console.log('Found prayer times:', prayerTimes)
 
-    // Check if current_prayer_times already has today's data
-    const { data: existingCurrent, error: checkError } = await supabase
+    // Clear all existing records from current_prayer_times first
+    console.log('Clearing all existing records from current_prayer_times...')
+    const { error: deleteError } = await supabase
       .from('current_prayer_times')
-      .select('*')
-      .eq('date', today)
-      .maybeSingle()
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000') // Delete all records
 
-    if (checkError) {
-      console.error('Error checking existing current prayer times:', checkError)
-    } else if (existingCurrent) {
-      console.log('Current prayer times already exist for today, updating...')
-    } else {
-      console.log('No current prayer times exist for today, creating new...')
+    if (deleteError) {
+      console.error('Error clearing current prayer times:', deleteError)
+      throw deleteError
     }
 
-    // Update or insert into current_prayer_times
+    console.log('Successfully cleared existing records, inserting new record for today...')
+
+    // Insert new record for today
     const { data: upsertData, error: upsertError } = await supabase
       .from('current_prayer_times')
-      .upsert({
+      .insert({
         date: today,
         fajr: prayerTimes.fajr,
         sunrise: prayerTimes.sunrise,
@@ -71,8 +70,6 @@ serve(async (req) => {
         asr: prayerTimes.asr,
         maghrib: prayerTimes.maghrib,
         isha: prayerTimes.isha
-      }, {
-        onConflict: 'date'
       })
       .select()
 
