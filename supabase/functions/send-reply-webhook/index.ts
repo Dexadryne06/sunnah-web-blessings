@@ -38,8 +38,12 @@ serve(async (req) => {
       status: 'processed'
     };
 
+    // Get webhook URL from environment (more secure)
+    const webhookUrl = Deno.env.get('REPLY_WEBHOOK_URL') || 
+                      'https://primary-production-a9d2d.up.railway.app/webhook/a5301f42-598a-4f34-9a89-50668cd136dd';
+    
     // Send to external webhook
-    const webhookResponse = await fetch('https://primary-production-a9d2d.up.railway.app/webhook/a5301f42-598a-4f34-9a89-50668cd136dd', {
+    const webhookResponse = await fetch(webhookUrl, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',

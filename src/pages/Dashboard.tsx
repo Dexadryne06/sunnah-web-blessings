@@ -29,6 +29,7 @@ import {
 import { AdminLogin } from '@/components/AdminLogin';
 import { ContactsWithReply } from '@/components/ContactsWithReply';
 import { FunctionLogs } from '@/components/FunctionLogs';
+import { SecurityDashboard } from '@/components/SecurityDashboard';
 
 interface AnalyticsData {
   totalEvents: number;
@@ -63,12 +64,42 @@ export default function Dashboard() {
 
   // Check authentication on mount
   useEffect(() => {
-    const checkAuth = () => {
-      const authStatus = localStorage.getItem('admin-authenticated');
-      const adminUserId = localStorage.getItem('admin-user-id');
-      setIsAuthenticated(authStatus === 'true' && adminUserId === '00000000-0000-0000-0000-000000000000');
+    const checkAuth = async () => {
+      const { data: { session } } = await supabase.auth.getSession();
+      if (session?.user) {
+        // Check if user is admin
+        const { data: adminUser, error } = await supabase
+          .from('admin_users_secure')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('is_active', true)
+          .single();
+        
+        setIsAuthenticated(!!adminUser && !error);
+      } else {
+        setIsAuthenticated(false);
+      }
     };
+    
     checkAuth();
+
+    // Listen for auth changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(async (event, session) => {
+      if (session?.user) {
+        const { data: adminUser, error } = await supabase
+          .from('admin_users_secure')
+          .select('*')
+          .eq('user_id', session.user.id)
+          .eq('is_active', true)
+          .single();
+        
+        setIsAuthenticated(!!adminUser && !error);
+      } else {
+        setIsAuthenticated(false);
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, []);
 
   // Load dashboard data only when authenticated
@@ -78,8 +109,8 @@ export default function Dashboard() {
     }
   }, [isAuthenticated]);
 
-  const handleLogout = () => {
-    localStorage.removeItem('admin-authenticated');
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     setIsAuthenticated(false);
   };
 
@@ -343,13 +374,14 @@ export default function Dashboard() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>
-        <TabsList className="grid w-full grid-cols-7">
+        <TabsList className="grid w-full grid-cols-8">
           <TabsTrigger value="overview">Analytics</TabsTrigger>
           <TabsTrigger value="tables">Database</TabsTrigger>
           <TabsTrigger value="interactions">Interazioni</TabsTrigger>
           <TabsTrigger value="sessions">Sessioni</TabsTrigger>
           <TabsTrigger value="contacts">Messaggi</TabsTrigger>
           <TabsTrigger value="logs">Logs</TabsTrigger>
+          <TabsTrigger value="security">Sicurezza</TabsTrigger>
           <TabsTrigger value="downloads">Download</TabsTrigger>
         </TabsList>
 
@@ -656,6 +688,10 @@ export default function Dashboard() {
 
         <TabsContent value="logs" className="space-y-6">
           <FunctionLogs />
+        </TabsContent>
+
+        <TabsContent value="security" className="space-y-6">
+          <SecurityDashboard />
         </TabsContent>
 
         <TabsContent value="downloads" className="space-y-6">

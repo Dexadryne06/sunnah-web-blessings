@@ -58,34 +58,25 @@ export const Contattaci = () => {
     setIsSubmitting(true);
 
     try {
-      // Salva su Supabase
-      const { error: supabaseError } = await supabase
-        .from('contacts')
-        .insert([
-          {
-            name: formData.name,
-            email: formData.email,
-            message: formData.message
-          }
-        ]);
-
-      if (supabaseError) {
-        console.error('Errore Supabase:', supabaseError);
+      // Input validation
+      if (!formData.name.trim() || !formData.email.trim() || !formData.message.trim()) {
+        toast({
+          title: "Errore",
+          description: "Tutti i campi sono obbligatori.",
+          variant: "destructive",
+        });
+        return;
       }
 
-      // Invia via webhook
-      const response = await fetch("https://primary-production-a9d2d.up.railway.app/webhook/a966bf4f-96d0-4c94-bbde-9d09719d2093", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          name: formData.name,
-          email: formData.email,
-          message: formData.message,
-          timestamp: new Date().toISOString()
-        }),
+      // Use secure edge function instead of direct webhook
+      const { data, error } = await supabase.functions.invoke('secure-contact-form', {
+        body: formData
       });
+
+      if (error) {
+        console.error('Edge function error:', error);
+        throw new Error(error.message || 'Errore durante l\'invio');
+      }
 
       toast({
         title: "Messaggio Inviato!",
