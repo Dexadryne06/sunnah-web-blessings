@@ -129,7 +129,8 @@ export const useAnalytics = () => {
         session_id: sessionId.current,
         pages_visited: pageViews.current.size,
         total_clicks: clickCount.current,
-        duration_seconds: duration
+        duration_seconds: duration,
+        updated_at: new Date().toISOString()
       }, {
         onConflict: 'session_id'
       });
@@ -146,7 +147,8 @@ export const useAnalytics = () => {
         end_time: new Date().toISOString(),
         duration_seconds: duration,
         pages_visited: pageViews.current.size,
-        total_clicks: clickCount.current
+        total_clicks: clickCount.current,
+        updated_at: new Date().toISOString()
       }).eq('session_id', sessionId.current);
     } catch (error) {
       console.error('Session end error:', error);
