@@ -8,12 +8,14 @@ import { Lock, User, LogIn, UserPlus, AlertCircle, CheckCircle } from 'lucide-re
 import { toast } from 'sonner';
 import { supabase } from '@/integrations/supabase/client';
 import { Alert, AlertDescription } from '@/components/ui/alert';
+import { useAuth } from '@/contexts/AuthContext';
 
 interface AdminLoginProps {
   onLogin: () => void;
 }
 
 export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
+  const { signIn, signUp, resetPassword, loading: authLoading } = useAuth();
   const [credentials, setCredentials] = useState({
     email: '',
     password: ''
@@ -46,14 +48,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
       if (mode === 'register') {
         console.log('Starting registration process for:', credentials.email);
         
-        // Register new admin user with proper redirect URL
-        const { data: authData, error: authError } = await supabase.auth.signUp({
-          email: credentials.email,
-          password: credentials.password,
-          options: {
-            emailRedirectTo: `${window.location.origin}/dashboard`
-          }
-        });
+        const { error: authError } = await signUp(credentials.email, credentials.password);
 
         if (authError) {
           console.error('Registration auth error:', authError);
@@ -65,84 +60,62 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           throw authError;
         }
 
-        console.log('Registration successful, auth data:', authData);
-
-        if (authData.user) {
-          // Wait a moment for the trigger to execute
-          await new Promise(resolve => setTimeout(resolve, 2000));
-          
-          // Verify admin user was created by the trigger
-          const { data: adminUser, error: adminCheckError } = await supabase
-            .from('admin_users_secure')
-            .select('*')
-            .eq('user_id', authData.user.id)
-            .single();
-
-          console.log('Admin user check result:', { adminUser, adminCheckError });
-
-          if (adminCheckError && adminCheckError.code !== 'PGRST116') {
-            console.error('Error checking admin user:', adminCheckError);
-            setErrorMessage('Errore nella verifica dell\'utente admin.');
-            throw adminCheckError;
-          }
-
-          if (!adminUser) {
-            console.warn('Admin user not found, attempting manual creation...');
-            // Fallback: try to create admin user manually
-            const { error: manualAdminError } = await supabase
-              .from('admin_users_secure')
-              .insert({
-                user_id: authData.user.id,
-                email: credentials.email,
-                role: 'admin'
-              });
-
-            if (manualAdminError) {
-              console.error('Manual admin creation failed:', manualAdminError);
-              setErrorMessage('Errore nella creazione dell\'utente admin.');
-              throw manualAdminError;
-            }
-            console.log('Manual admin creation successful');
-          }
-
-          await logSecurityEvent('admin_registration_success', `Admin user registered successfully: ${credentials.email}`);
-          
-          setRegistrationStatus('success');
-          toast.success('Admin registrato con successo! Controlla la tua email per confermare l\'account.');
-          
-          // Reset form
-          setCredentials({ email: '', password: '' });
-        }
+        console.log('Registration successful');
+        
+        // Wait a moment for the trigger to execute and check admin creation
+        await new Promise(resolve => setTimeout(resolve, 2000));
+        
+        await logSecurityEvent('admin_registration_success', `Admin user registered successfully: ${credentials.email}`);
+        
+        setRegistrationStatus('success');
+        toast.success('Admin registrato con successo! Controlla la tua email per confermare l\'account.');
+        
+        // Reset form
+        setCredentials({ email: '', password: '' });
+        
       } else {
         // Login existing admin user
         console.log('Starting login process for:', credentials.email);
         
-        const { data: authData, error: authError } = await supabase.auth.signInWithPassword({
-          email: credentials.email,
-          password: credentials.password
-        });
+        const { error: authError } = await signIn(credentials.email, credentials.password);
 
         if (authError) {
           console.error('Login error:', authError);
           await logSecurityEvent('admin_login_failed', `Failed login attempt for email: ${credentials.email}`);
-          setErrorMessage(`Errore durante l'accesso: ${authError.message}`);
+          
+          if (authError.message.includes('Invalid login credentials')) {
+            setErrorMessage('Email o password non corretti. Controlla le credenziali o usa "Password dimenticata?"');
+          } else {
+            setErrorMessage(`Errore durante l'accesso: ${authError.message}`);
+          }
           throw authError;
         }
 
-        if (authData.user) {
-          console.log('Login successful, checking admin status...');
-          
+        console.log('Login successful, checking admin status...');
+        
+        // Get current user from session to check admin status
+        const { data: { user } } = await supabase.auth.getUser();
+        
+        if (user) {
           // Check if user is admin
           const { data: adminUser, error: adminError } = await supabase
             .from('admin_users_secure')
             .select('*')
-            .eq('user_id', authData.user.id)
+            .eq('user_id', user.id)
             .eq('is_active', true)
-            .single();
+            .maybeSingle();
 
           console.log('Admin check result:', { adminUser, adminError });
 
-          if (adminError || !adminUser) {
+          if (adminError) {
+            console.error('Error checking admin status:', adminError);
+            await supabase.auth.signOut();
+            await logSecurityEvent('admin_check_error', `Error checking admin status for: ${credentials.email}`);
+            setErrorMessage('Errore nella verifica dello stato admin.');
+            throw adminError;
+          }
+
+          if (!adminUser) {
             await supabase.auth.signOut();
             await logSecurityEvent('admin_unauthorized_access', `Non-admin user attempted dashboard access: ${credentials.email}`);
             setErrorMessage('Accesso non autorizzato. Solo gli amministratori possono accedere.');
@@ -153,7 +126,7 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
           await supabase
             .from('admin_users_secure')
             .update({ last_login: new Date().toISOString() })
-            .eq('user_id', authData.user.id);
+            .eq('user_id', user.id);
 
           await logSecurityEvent('admin_login_success', `Admin user logged in: ${credentials.email}`);
           onLogin();
