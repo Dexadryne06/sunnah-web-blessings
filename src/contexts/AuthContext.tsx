@@ -35,7 +35,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   const [isAdmin, setIsAdmin] = useState(false);
 
   const checkAdminStatus = async (userId: string) => {
-    console.log('🔍 Checking admin status for user:', userId);
+    console.log('🔍 Checking admin status for:', userId);
     try {
       const { data: adminUser, error } = await supabase
         .from('admin_users_secure')
@@ -44,10 +44,8 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         .eq('is_active', true)
         .maybeSingle();
 
-      console.log('👤 Admin check result:', { adminUser, error });
-      
       if (error) {
-        console.error('❌ Error checking admin status:', error);
+        console.error('❌ Admin check error:', error);
         setIsAdmin(false);
         return false;
       }
@@ -57,23 +55,23 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       setIsAdmin(adminStatus);
       return adminStatus;
     } catch (error) {
-      console.error('💥 Exception checking admin status:', error);
+      console.error('💥 Admin check exception:', error);
       setIsAdmin(false);
       return false;
     }
   };
 
   useEffect(() => {
-    console.log('🚀 AuthProvider initializing...');
+    console.log('🚀 AuthProvider initializing');
     
-    // Get initial session
-    const getInitialSession = async () => {
+    let isInitialized = false;
+
+    const initializeAuth = async () => {
       try {
-        console.log('📡 Getting initial session...');
         const { data: { session }, error } = await supabase.auth.getSession();
         
         if (error) {
-          console.error('❌ Error getting initial session:', error);
+          console.error('❌ Session error:', error);
         } else {
           console.log('📋 Initial session:', session?.user?.email || 'no session');
           setSession(session);
@@ -85,67 +83,48 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
             setIsAdmin(false);
           }
         }
+        
+        isInitialized = true;
       } catch (error) {
-        console.error('💥 Exception in getInitialSession:', error);
+        console.error('💥 Init error:', error);
       } finally {
-        console.log('✅ Initial session check complete');
         setLoading(false);
       }
     };
 
-    getInitialSession();
-
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        console.log('🔄 Auth state changed:', event, session?.user?.email || 'no user');
+        console.log('🔄 Auth event:', event);
         
-        // Skip processing if this is the initial session and we've already processed it
-        if (event === 'INITIAL_SESSION' && user !== null) {
-          console.log('🔄 Skipping INITIAL_SESSION - already processed');
+        if (event === 'INITIAL_SESSION' && isInitialized) {
           return;
         }
         
         setSession(session);
         setUser(session?.user ?? null);
         
-        try {
-          if (session?.user) {
-            console.log('👤 User signed in, checking admin status...');
-            await checkAdminStatus(session.user.id);
-          } else {
-            console.log('👋 User signed out');
-            setIsAdmin(false);
-          }
-        } catch (error) {
-          console.error('❌ Error in auth state change:', error);
+        if (session?.user) {
+          await checkAdminStatus(session.user.id);
+        } else {
           setIsAdmin(false);
-        } finally {
-          // Only set loading to false for non-initial events or if we don't have a user yet
-          if (event !== 'INITIAL_SESSION' || !user) {
-            setLoading(false);
-            console.log('🏁 Auth state change completed, loading set to false');
-          }
         }
         
-        if (event === 'TOKEN_REFRESHED') {
-          console.log('🔄 Token refreshed successfully');
-        } else if (event === 'SIGNED_OUT') {
-          console.log('👋 User signed out event');
-        } else if (event === 'SIGNED_IN') {
-          console.log('👤 User signed in event');
+        if (!isInitialized) {
+          setLoading(false);
         }
       }
     );
 
+    initializeAuth();
+
     return () => {
-      console.log('🧹 Cleaning up auth subscription');
+      console.log('🧹 Auth cleanup');
       subscription.unsubscribe();
     };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    console.log('🔐 Starting sign in for:', email);
+    console.log('🔐 Sign in:', email);
     setLoading(true);
     
     try {
@@ -159,19 +138,16 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error };
       }
       
-      console.log('✅ Sign in successful for:', data.user?.email);
+      console.log('✅ Sign in successful');
       return { error: null };
     } catch (error) {
-      console.error('💥 Unexpected sign in error:', error);
+      console.error('💥 Sign in exception:', error);
       return { error };
-    } finally {
-      // Non resettiamo loading qui perché sarà gestito da onAuthStateChange
-      console.log('🏁 Sign in process completed');
     }
   };
 
   const signUp = async (email: string, password: string) => {
-    console.log('📝 Starting sign up for:', email);
+    console.log('📝 Sign up:', email);
     setLoading(true);
     
     try {
@@ -188,10 +164,10 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         return { error };
       }
       
-      console.log('✅ Sign up successful for:', data.user?.email);
+      console.log('✅ Sign up successful');
       return { error: null };
     } catch (error) {
-      console.error('💥 Unexpected sign up error:', error);
+      console.error('💥 Sign up exception:', error);
       return { error };
     } finally {
       setLoading(false);
@@ -199,7 +175,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
   };
 
   const signOut = async () => {
-    console.log('👋 Starting sign out...');
+    console.log('👋 Sign out');
     setLoading(true);
     
     try {
@@ -210,14 +186,14 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
         console.log('✅ Sign out successful');
       }
     } catch (error) {
-      console.error('💥 Unexpected sign out error:', error);
+      console.error('💥 Sign out exception:', error);
     } finally {
       setLoading(false);
     }
   };
 
   const resetPassword = async (email: string) => {
-    console.log('🔄 Resetting password for:', email);
+    console.log('🔄 Reset password:', email);
     
     try {
       const { error } = await supabase.auth.resetPasswordForEmail(email, {
@@ -232,7 +208,7 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
       console.log('✅ Reset password email sent');
       return { error: null };
     } catch (error) {
-      console.error('💥 Unexpected reset password error:', error);
+      console.error('💥 Reset password exception:', error);
       return { error };
     }
   };
@@ -250,7 +226,6 @@ export const AuthProvider = ({ children }: AuthProviderProps) => {
 
   console.log('🎯 Auth state:', { 
     hasUser: !!user, 
-    hasSession: !!session, 
     loading, 
     isAdmin,
     userEmail: user?.email 

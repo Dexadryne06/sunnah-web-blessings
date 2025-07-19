@@ -27,7 +27,6 @@ import {
   LogOut,
   Settings
 } from 'lucide-react';
-import { AdminLogin } from '@/components/AdminLogin';
 import { ContactsWithReply } from '@/components/ContactsWithReply';
 import { FunctionLogs } from '@/components/FunctionLogs';
 import { SecurityDashboard } from '@/components/SecurityDashboard';
@@ -58,40 +57,35 @@ interface DatabaseTables {
 const COLORS = ['#8884d8', '#82ca9d', '#ffc658', '#ff7300', '#00ff00', '#0088fe'];
 
 export default function Dashboard() {
-  const { user, isAdmin, loading: authLoading, signOut } = useAuth();
+  const { signOut } = useAuth();
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [tables, setTables] = useState<DatabaseTables | null>(null);
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [activeTab, setActiveTab] = useState('overview');
   const [updatingPrayerTimes, setUpdatingPrayerTimes] = useState(false);
-  const [dashboardAuthenticated, setDashboardAuthenticated] = useState(false);
 
-  // Check if user is admin and authenticated for dashboard
+  console.log('📊 Dashboard rendering');
+
   useEffect(() => {
-    if (!authLoading) {
-      if (user && isAdmin) {
-        setDashboardAuthenticated(true);
-        loadDashboardData();
-      } else {
-        setDashboardAuthenticated(false);
-      }
-    }
-  }, [user, isAdmin, authLoading]);
+    console.log('📊 Dashboard useEffect - loading data');
+    loadDashboardData();
+  }, []);
 
   const handleLogout = async () => {
-    console.log('👋 Logging out...');
+    console.log('👋 Dashboard logout');
     await signOut();
   };
 
   const updatePrayerTimes = async () => {
+    console.log('🕐 Updating prayer times');
     setUpdatingPrayerTimes(true);
     try {
       const { data, error } = await supabase.functions.invoke('update-daily-prayer-times');
       if (error) throw error;
       toast.success("Orari di preghiera aggiornati con successo!");
-      loadDashboardData(); // Refresh data
+      loadDashboardData();
     } catch (error) {
-      console.error('Error updating prayer times:', error);
+      console.error('❌ Error updating prayer times:', error);
       toast.error("Errore nell'aggiornamento degli orari di preghiera");
     } finally {
       setUpdatingPrayerTimes(false);
@@ -103,17 +97,16 @@ export default function Dashboard() {
       console.log('📊 Loading dashboard data...');
       setLoading(true);
       
-      // Load analytics data
       const analyticsData = await loadAnalytics();
       setAnalytics(analyticsData);
       
-      // Load database tables
       const tablesData = await loadTables();
       setTables(tablesData);
       
       console.log('✅ Dashboard data loaded successfully');
     } catch (error) {
       console.error('❌ Error loading dashboard data:', error);
+      toast.error('Errore nel caricamento dei dati');
     } finally {
       setLoading(false);
     }
@@ -260,24 +253,6 @@ export default function Dashboard() {
     };
   };
 
-  // Show login screen if not authenticated or not admin
-  if (authLoading) {
-    return (
-      <div className="container mx-auto py-8">
-        <div className="flex items-center justify-center min-h-[400px]">
-          <div className="text-center">
-            <div className="animate-spin h-8 w-8 border-b-2 border-primary mx-auto mb-4"></div>
-            <p>Verifica autenticazione...</p>
-          </div>
-        </div>
-      </div>
-    );
-  }
-
-  if (!dashboardAuthenticated) {
-    return <AdminLogin />;
-  }
-
   if (loading) {
     return (
       <div className="container mx-auto py-8">
@@ -314,7 +289,6 @@ export default function Dashboard() {
         </div>
       </div>
 
-      {/* Overview Stats */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         <Card>
           <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
@@ -371,7 +345,6 @@ export default function Dashboard() {
         </TabsList>
 
         <TabsContent value="overview" className="space-y-6">
-          {/* Charts */}
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             <Card>
               <CardHeader>

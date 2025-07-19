@@ -1,11 +1,21 @@
+
 import { useEffect } from 'react';
+import { useLocation } from 'react-router-dom';
 import { useAnalytics } from '@/hooks/use-analytics';
 
 export const AnalyticsTracker = () => {
   const { trackClick } = useAnalytics();
+  const location = useLocation();
 
   useEffect(() => {
-    // Track all clicks on the page
+    // Non tracciare nella dashboard per evitare chiamate API eccessive
+    if (location.pathname === '/dashboard') {
+      console.log('📊 Analytics disabled for dashboard');
+      return;
+    }
+
+    console.log('📊 Analytics enabled for:', location.pathname);
+
     const handleClick = (event: MouseEvent) => {
       const target = event.target as HTMLElement;
       const elementText = target.textContent?.trim() || '';
@@ -13,14 +23,12 @@ export const AnalyticsTracker = () => {
       const tagName = target.tagName.toLowerCase();
       const className = target.className || '';
       
-      // Get more specific info for buttons and links
       let metadata: Record<string, any> = {
         tagName,
         className,
         href: tagName === 'a' ? (target as HTMLAnchorElement).href : undefined
       };
 
-      // Special tracking for specific elements
       if (elementText.includes('Yusuf')) {
         metadata.specialElement = 'yusuf_credit';
       }
@@ -39,7 +47,7 @@ export const AnalyticsTracker = () => {
 
     document.addEventListener('click', handleClick);
     return () => document.removeEventListener('click', handleClick);
-  }, [trackClick]);
+  }, [trackClick, location.pathname]);
 
   return null;
 };
