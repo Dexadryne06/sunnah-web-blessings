@@ -176,9 +176,9 @@ export const AdminRegistrationDebug = () => {
                     <TableCell className="max-w-md truncate">
                       {log.event_description}
                     </TableCell>
-                     <TableCell className="max-w-xs pr-8">
+                     <TableCell className="max-w-xs pr-2">
                        {log.metadata && (
-                         <pre className="text-xs bg-muted p-1 rounded max-w-[200px] overflow-auto">
+                         <pre className="text-xs bg-muted p-1 rounded max-w-[150px] overflow-auto">
                            {JSON.stringify(log.metadata, null, 2)}
                          </pre>
                        )}

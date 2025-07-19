@@ -423,7 +423,7 @@ export default function Dashboard() {
                   <select 
                     value={activityTimeFrame} 
                     onChange={(e) => setActivityTimeFrame(e.target.value)}
-                    className="px-3 py-1 border rounded-md text-sm"
+                    className="px-3 py-1 border border-border rounded-md text-sm bg-background text-foreground"
                   >
                     <option value="3h">Ultime 3 ore</option>
                     <option value="6h">Ultime 6 ore</option>
