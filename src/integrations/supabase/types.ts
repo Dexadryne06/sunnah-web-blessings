@@ -14,30 +14,6 @@ export type Database = {
   }
   public: {
     Tables: {
-      admin_auth: {
-        Row: {
-          created_at: string
-          id: string
-          password_hash: string
-          updated_at: string
-          username: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          password_hash: string
-          updated_at?: string
-          username: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          password_hash?: string
-          updated_at?: string
-          username?: string
-        }
-        Relationships: []
-      }
       admin_users: {
         Row: {
           created_at: string
@@ -68,7 +44,6 @@ export type Database = {
       analytics_events: {
         Row: {
           created_at: string
-          download_details: Json | null
           element_id: string | null
           element_text: string | null
           event_name: string
@@ -82,7 +57,6 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          download_details?: Json | null
           element_id?: string | null
           element_text?: string | null
           event_name: string
@@ -96,7 +70,6 @@ export type Database = {
         }
         Update: {
           created_at?: string
-          download_details?: Json | null
           element_id?: string | null
           element_text?: string | null
           event_name?: string
@@ -156,10 +129,7 @@ export type Database = {
           id: string
           message: string
           name: string
-          responded_at: string | null
-          response_status: string | null
           updated_at: string
-          webhook_sent: boolean | null
         }
         Insert: {
           created_at?: string
@@ -167,10 +137,7 @@ export type Database = {
           id?: string
           message: string
           name: string
-          responded_at?: string | null
-          response_status?: string | null
           updated_at?: string
-          webhook_sent?: boolean | null
         }
         Update: {
           created_at?: string
@@ -178,10 +145,7 @@ export type Database = {
           id?: string
           message?: string
           name?: string
-          responded_at?: string | null
-          response_status?: string | null
           updated_at?: string
-          webhook_sent?: boolean | null
         }
         Relationships: []
       }
@@ -242,33 +206,6 @@ export type Database = {
           details?: Json | null
           id?: string
           interaction_type?: string
-        }
-        Relationships: []
-      }
-      edge_function_logs: {
-        Row: {
-          created_at: string
-          function_name: string
-          id: string
-          log_level: string
-          message: string
-          metadata: Json | null
-        }
-        Insert: {
-          created_at?: string
-          function_name: string
-          id?: string
-          log_level: string
-          message: string
-          metadata?: Json | null
-        }
-        Update: {
-          created_at?: string
-          function_name?: string
-          id?: string
-          log_level?: string
-          message?: string
-          metadata?: Json | null
         }
         Relationships: []
       }
