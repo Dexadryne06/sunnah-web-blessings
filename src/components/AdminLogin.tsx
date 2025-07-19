@@ -274,6 +274,36 @@ export const AdminLogin = ({ onLogin }: AdminLoginProps) => {
               )}
             </Button>
             
+            {mode === 'login' && (
+              <Button
+                type="button"
+                variant="link"
+                className="w-full mt-2"
+                onClick={async () => {
+                  if (!credentials.email) {
+                    setErrorMessage("Inserisci la tua email per resettare la password");
+                    return;
+                  }
+                  
+                  setIsLoading(true);
+                  const { error } = await supabase.auth.resetPasswordForEmail(credentials.email, {
+                    redirectTo: `${window.location.origin}/dashboard`,
+                  });
+                  
+                  if (error) {
+                    setErrorMessage(error.message);
+                    toast.error("Errore nell'invio dell'email di reset");
+                  } else {
+                    toast.success("Email di reset inviata! Controlla la tua casella di posta");
+                  }
+                  setIsLoading(false);
+                }}
+                disabled={isLoading}
+              >
+                Password dimenticata?
+              </Button>
+            )}
+            
             {mode === 'register' && (
               <div className="text-sm text-muted-foreground text-center space-y-2">
                 <p>La registrazione crea automaticamente un utente admin</p>
